@@ -18,7 +18,7 @@
         <!-- Botón de Notificaciones -->
         <li class="notifications-container" *ngIf="!(mediaQuery$ | async)">
             <button class="notifications-btn" [matMenuTriggerFor]="notificationsMenu" 
-                    [matBadge]="totalNotifications" matBadgeColor="accent" 
+                    [matBadge]="totalNotifications" matBadgeColor="warn" 
                     [matBadgeHidden]="totalNotifications === 0"
                     aria-label="notificaciones">
                 <mat-icon aria-hidden="false">notifications</mat-icon>

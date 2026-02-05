@@ -1,11 +1,12 @@
 
 import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { environment } from '../../environments/environment';
-import { AppTheme } from '../interface/theme.interface';
-import { ThemeService } from '../service/theme/theme.service';
+import { AppTheme } from '../../../../shared-utils/src/lib/theme/theme.interface';
+import { ThemeService } from 'shared-utils';
 import { IMenu, ISidebarMenu } from '../interface/menu.interface';
 import { SesionService } from '../service/sesion.service';
 import { IUsuario } from '../interface/usuario.interface';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-contenedor',
@@ -41,6 +42,7 @@ export class ContenedorComponent implements OnInit {
   constructor(
     private themeService: ThemeService,
     private _sesionService: SesionService,
+    private router: Router
     
   ) {
     this.nameApp = environment.nameApp;
@@ -69,6 +71,10 @@ export class ContenedorComponent implements OnInit {
     }).catch((error) => {
       console.log(error);
     });
+  }
+
+  goTo(ruta: string) {
+    this.router.navigate([ruta]);
   }
 
   //========================== SIDEBAR METHODS ========================//

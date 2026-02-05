@@ -1,11 +1,13 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { ContenedorComponent } from './contenedor.component'; 
+import { loadRemoteModule } from '@angular-architects/native-federation';
 
 const routes: Routes = [
   {
     path: 'pages',
-    component: ContenedorComponent,
+    loadChildren: () =>
+      loadRemoteModule('seis-mfe-gestion-usuario', './AppRoutingModule')
+        .then(m => m.AppRoutingModule)
   }
 ];
 
