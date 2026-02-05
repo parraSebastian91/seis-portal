@@ -1,1 +1,110 @@
 /* You can add global styles to this file, and also import other style files */
+:root {
+  --primary: #1976d2;
+  --secondary: #114d8a;
+  --focus-background: #5e63ff;
+  --focus-font-color: #ffffff;
+  --font-color: #ffffff;
+  --accent:  #ff4081;
+  --warn:    #f44336;
+  --line-clr: #42434a;
+  --background-menu: #11121a;
+  --background-body: #11121a;
+  --background-menu-actions: #ebebeb;
+  --background-toolbar: #ffffff;
+  --on-primary: #ffffff;
+
+  /* Mapear a variables de Angular Material (MDC) */
+  --mdc-theme-primary: var(--primary);
+  --mdc-theme-secondary: var(--accent);
+  --mdc-theme-surface: var(--background);
+  --mdc-theme-on-primary: var(--on-primary);
+}
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+/*
+  Opcional: si prefieres servir las fuentes localmente (evitar requests a fonts.gstatic.com),
+  coloca los archivos woff2 en `src/assets/fonts/` con estos nombres indicados y descomenta
+  las reglas @font-face a continuación.
+
+  Archivos esperados ejemplo:
+    src/assets/fonts/Roboto-Regular.woff2
+    src/assets/fonts/Roboto-Medium.woff2
+    src/assets/fonts/MaterialIcons-Regular.woff2
+
+  Luego descomentar las reglas para usarlas.
+*/
+
+/*
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  src: url('/assets/fonts/Roboto-Regular.woff2') format('woff2');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 500;
+  src: url('/assets/fonts/Roboto-Medium.woff2') format('woff2');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Material Icons';
+  font-style: normal;
+  font-weight: 400;
+  src: url('/assets/fonts/MaterialIcons-Regular.woff2') format('woff2');
+  font-display: block;
+}
+
+/* usar Material Icons localmente: */
+.material-icons {
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ===== Estilos para Angular Material Menu ===== */
+.mat-mdc-menu-panel {
+  background-color: var(--background-menu) !important;
+  border-radius: 0.5rem;
+  border: 1px solid var(--line-clr);
+}
+
+.mat-mdc-menu-content {
+  background-color: var(--background-menu) !important;
+  padding: 0.5rem 0 !important;
+}
+
+.mat-mdc-menu-item {
+  color: var(--font-color) !important;
+  font-size: 0.9rem;
+  
+  &:hover {
+    background-color: var(--focus-background) !important;
+    color: var(--focus-font-color) !important;
+  }
+  
+  &:focus {
+    background-color: var(--focus-background) !important;
+  }
+}
+
+.mat-mdc-menu-item-text {
+  color: inherit;
+}

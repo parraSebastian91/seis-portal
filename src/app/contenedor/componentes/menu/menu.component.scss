@@ -1,0 +1,34 @@
+.menu-container {}
+
+.menu {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-top: 50px;
+    background-color: var(--background-menu-actions);
+
+}
+
+.menu-list {
+    // padding: 0px 10px 0px 0px;
+    padding: unset !important;
+}
+
+.menu-item:hover {
+    background-color: var(--focus-background);
+    color: var(--focus-font-color);
+
+    .menu-display {
+        color: var(--focus-font-color);
+    }
+
+    cursor: pointer;
+}
+
+.menu-item {
+    .menu-display {
+        color: var(--font-color);
+    }
+
+    padding: unset !important;
+}

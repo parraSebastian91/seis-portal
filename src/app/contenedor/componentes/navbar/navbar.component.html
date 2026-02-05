@@ -1,0 +1,71 @@
+<button id="open-sidebar-button" (click)="openSidebar()" #openSidebarButton aria-label="open sidebar" aria-expanded="false"
+    aria-controls="navbar">
+    <mat-icon class="svg" aria-hidden="false" aria-label="icon" >menu</mat-icon>
+</button>
+
+<nav id="navbar" #navbar>
+    <ul>
+        <li>
+            <button id="close-sidebar-button" (click)="closeSidebar()" #closeSidebarButton aria-label="close sidebar">
+                <svg xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="40px"
+                    fill="#c9c9c9">
+                    <path
+                        d="m480-444.62-209.69 209.7q-7.23 7.23-17.5 7.42-10.27.19-17.89-7.42-7.61-7.62-7.61-17.7 0-10.07 7.61-17.69L444.62-480l-209.7-209.69q-7.23-7.23-7.42-17.5-.19-10.27 7.42-17.89 7.62-7.61 17.7-7.61 10.07 0 17.69 7.61L480-515.38l209.69-209.7q7.23-7.23 17.5-7.42 10.27-.19 17.89 7.42 7.61 7.62 7.61 17.7 0 10.07-7.61 17.69L515.38-480l209.7 209.69q7.23 7.23 7.42 17.5.19 10.27-7.42 17.89-7.62 7.61-17.7 7.61-10.07 0-17.69-7.61L480-444.62Z" />
+                </svg>
+            </button>
+        </li>
+        
+        <!-- Botón de Notificaciones -->
+        <li class="notifications-container" *ngIf="!(mediaQuery$ | async)">
+            <button class="notifications-btn" [matMenuTriggerFor]="notificationsMenu" 
+                    [matBadge]="totalNotifications" matBadgeColor="accent" 
+                    [matBadgeHidden]="totalNotifications === 0"
+                    aria-label="notificaciones">
+                <mat-icon aria-hidden="false">notifications</mat-icon>
+            </button>
+            
+            <mat-menu #notificationsMenu="matMenu" class="notifications-menu" xPosition="before">
+                @for (section of notificationSections; track section.id) {
+                    <button mat-menu-item [matMenuTriggerFor]="submenu" 
+                            [disabled]="section.notifications.length === 0">
+                        <mat-icon>{{section.icon}}</mat-icon>
+                        <span>{{section.name}}</span>
+                        <span class="badge" *ngIf="section.notifications.length > 0">
+                            {{section.notifications.length}}
+                        </span>
+                    </button>
+                    
+                    <mat-menu #submenu="matMenu" class="notifications-submenu">
+                        @if (section.notifications.length > 0) {
+                            @for (notification of section.notifications; track notification.id) {
+                                <button mat-menu-item (click)="markAsRead(notification.id)" class="notification-item">
+                                    <span class="notification-title">{{notification.title}}</span>
+                                    <span class="notification-time">{{notification.timestamp | date:'short'}}</span>
+                                </button>
+                            }
+                            <mat-divider></mat-divider>
+                            <button mat-menu-item (click)="clearSection(section.id)" class="clear-btn">
+                                <mat-icon>clear_all</mat-icon>
+                                <span>Limpiar {{section.name}}</span>
+                            </button>
+                        } @else {
+                            <button mat-menu-item disabled>
+                                <span>Sin notificaciones</span>
+                            </button>
+                        }
+                    </mat-menu>
+                }
+                
+                @if (totalNotifications > 0) {
+                    <mat-divider></mat-divider>
+                    <button mat-menu-item (click)="clearAllNotifications()" class="clear-all-btn">
+                        <mat-icon>delete_sweep</mat-icon>
+                        <span>Limpiar todas</span>
+                    </button>
+                }
+            </mat-menu>
+        </li>
+    </ul>
+</nav>
+
+<div id="overlay" (click)="closeSidebar()" #overlay aria-hidden="true"></div>

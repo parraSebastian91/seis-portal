@@ -1,0 +1,13 @@
+<div class="menu-container">
+    <app-perfil></app-perfil>
+    <div class="menu">
+        <mat-list class="menu-list">
+            @for (menu of menus; track menu) {
+            <mat-list-item class="menu-item" (click)="navegar(menu.ruta!)">
+                <mat-icon matListItemIcon>{{menu.icono}}</mat-icon>
+                <div matListItemTitle class="menu-display">{{menu.nombre}}</div>
+            </mat-list-item>
+            }
+        </mat-list>
+    </div>
+</div>
