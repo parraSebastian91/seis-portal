@@ -14,13 +14,12 @@
 }
 
 nav {
-  background-color: var(--background-body);
-  border-bottom: 1px solid var(--line-clr);
-  padding-right: 1em;
-  position: fixed;
-  top: unset;
-  height: 53px;
-  width: -webkit-fill-available;
+  background-color: transparent;
+  border-bottom: none;
+  padding: 0;
+  position: relative;
+  height: auto;
+  width: auto;
   display: flex;
   justify-content: flex-end;
 }
@@ -28,6 +27,8 @@ nav {
 nav ul {
   list-style: none;
   display: flex;
+  margin: 0;
+  padding: 0;
 }
 
 nav .home-li {
@@ -121,6 +122,10 @@ nav a.accent-link {
   #overlay {
     display: none !important;
   }
+
+  .notifications-panel {
+    display: none !important;
+  }
 }
 
 /* ===== Estilos para Notificaciones ===== */
@@ -150,6 +155,169 @@ nav a.accent-link {
     font-size: 24px;
     width: 24px;
     height: 24px;
+  }
+}
+
+.notifications-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  width: 320px;
+  background-color: var(--background-body);
+  border-left: 1px solid var(--line-clr);
+  box-shadow: -12px 0 24px rgba(0, 0, 0, 0.08);
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+  z-index: 90;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.notifications-panel.open {
+  transform: translateX(0);
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--line-clr);
+}
+
+.panel-title {
+  font-weight: 600;
+  color: var(--font-color);
+}
+
+.close-panel-btn {
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: var(--font-color);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem;
+  border-radius: 0.5rem;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: var(--focus-background);
+  }
+}
+
+.panel-content {
+  flex: 1;
+  overflow-y: auto;
+  margin-top: 0.75rem;
+  padding-right: 0.25rem;
+}
+
+.panel-section {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--line-clr);
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--font-color);
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.section-title {
+  font-weight: 500;
+  flex: 1;
+}
+
+.section-clear-btn {
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: #ff6b6b;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem;
+  border-radius: 0.4rem;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: rgba(255, 107, 107, 0.15);
+  }
+}
+
+.section-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.notification-item {
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  padding: 0.5rem 0.5rem;
+  border-radius: 0.5rem;
+  transition: background-color 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  color: var(--font-color);
+
+  &:hover {
+    background-color: var(--focus-background);
+  }
+}
+
+.notification-title {
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.notification-time {
+  font-size: 0.75rem;
+  opacity: 0.6;
+}
+
+.section-empty {
+  font-size: 0.85rem;
+  opacity: 0.6;
+  color: var(--font-color);
+  margin-top: 0.5rem;
+}
+
+.panel-actions {
+  margin-top: 1rem;
+}
+
+.clear-all-btn {
+  width: 100%;
+  border: none;
+  background: none;
+  color: #ff6b6b;
+  cursor: pointer;
+  padding: 0.6rem 0.75rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: rgba(255, 107, 107, 0.15);
   }
 }
 

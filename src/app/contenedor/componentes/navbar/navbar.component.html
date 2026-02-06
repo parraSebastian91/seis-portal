@@ -17,55 +17,63 @@
         
         <!-- Botón de Notificaciones -->
         <li class="notifications-container" *ngIf="!(mediaQuery$ | async)">
-            <button class="notifications-btn" [matMenuTriggerFor]="notificationsMenu" 
+            <button class="notifications-btn" (click)="toggleNotificationsPanel()"
+                    [attr.aria-expanded]="notificationsPanelOpen"
                     [matBadge]="totalNotifications" matBadgeColor="warn" 
                     [matBadgeHidden]="totalNotifications === 0"
                     aria-label="notificaciones">
                 <mat-icon aria-hidden="false">notifications</mat-icon>
             </button>
-            
-            <mat-menu #notificationsMenu="matMenu" class="notifications-menu" xPosition="before">
-                @for (section of notificationSections; track section.id) {
-                    <button mat-menu-item [matMenuTriggerFor]="submenu" 
-                            [disabled]="section.notifications.length === 0">
-                        <mat-icon>{{section.icon}}</mat-icon>
-                        <span>{{section.name}}</span>
-                        <span class="badge" *ngIf="section.notifications.length > 0">
-                            {{section.notifications.length}}
-                        </span>
-                    </button>
-                    
-                    <mat-menu #submenu="matMenu" class="notifications-submenu">
-                        @if (section.notifications.length > 0) {
-                            @for (notification of section.notifications; track notification.id) {
-                                <button mat-menu-item (click)="markAsRead(notification.id)" class="notification-item">
-                                    <span class="notification-title">{{notification.title}}</span>
-                                    <span class="notification-time">{{notification.timestamp | date:'short'}}</span>
-                                </button>
-                            }
-                            <mat-divider></mat-divider>
-                            <button mat-menu-item (click)="clearSection(section.id)" class="clear-btn">
-                                <mat-icon>clear_all</mat-icon>
-                                <span>Limpiar {{section.name}}</span>
-                            </button>
-                        } @else {
-                            <button mat-menu-item disabled>
-                                <span>Sin notificaciones</span>
-                            </button>
-                        }
-                    </mat-menu>
-                }
-                
-                @if (totalNotifications > 0) {
-                    <mat-divider></mat-divider>
-                    <button mat-menu-item (click)="clearAllNotifications()" class="clear-all-btn">
-                        <mat-icon>delete_sweep</mat-icon>
-                        <span>Limpiar todas</span>
-                    </button>
-                }
-            </mat-menu>
         </li>
     </ul>
 </nav>
+
+<aside class="notifications-panel" [class.open]="notificationsPanelOpen" aria-label="Panel de notificaciones">
+    <div class="panel-header">
+        <span class="panel-title">Notificaciones</span>
+        <button class="close-panel-btn" (click)="closeNotificationsPanel()" aria-label="cerrar panel">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+    <div class="panel-content">
+        @for (section of notificationSections; track section.id) {
+            <div class="panel-section">
+                <div class="section-header">
+                    <mat-icon>{{section.icon}}</mat-icon>
+                    <span class="section-title">{{section.name}}</span>
+                    <span class="badge" *ngIf="section.notifications.length > 0">
+                        {{section.notifications.length}}
+                    </span>
+                    <button class="section-clear-btn" *ngIf="section.notifications.length > 0"
+                        (click)="clearSection(section.id)" aria-label="limpiar sección">
+                        <mat-icon>clear_all</mat-icon>
+                    </button>
+                </div>
+
+                @if (section.notifications.length > 0) {
+                    <div class="section-items">
+                        @for (notification of section.notifications; track notification.id) {
+                            <button class="notification-item" (click)="markAsRead(notification.id)">
+                                <span class="notification-title">{{notification.title}}</span>
+                                <span class="notification-time">{{notification.timestamp | date:'short'}}</span>
+                            </button>
+                        }
+                    </div>
+                } @else {
+                    <div class="section-empty">Sin notificaciones</div>
+                }
+            </div>
+        }
+
+        @if (totalNotifications > 0) {
+            <div class="panel-actions">
+                <button class="clear-all-btn" (click)="clearAllNotifications()">
+                    <mat-icon>delete_sweep</mat-icon>
+                    <span>Limpiar todas</span>
+                </button>
+            </div>
+        }
+    </div>
+</aside>
 
 <div id="overlay" (click)="closeSidebar()" #overlay aria-hidden="true"></div>

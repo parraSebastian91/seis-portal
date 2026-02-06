@@ -38,6 +38,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   private notificationsSubject = new BehaviorSubject<NotificationSection[]>([]);
   notificationSections$ = this.notificationsSubject.asObservable();
   notificationSections: NotificationSection[] = [];
+  notificationsPanelOpen = false;
   
   mediaQuery$ = new Observable<boolean>(observer => {
     const mq = window.matchMedia('(width < 700px)');
@@ -80,6 +81,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
     if (this.mediaQuery && this.mediaQueryListener) {
       this.mediaQuery.removeEventListener('change', this.mediaQueryListener);
     }
+
+    this.setNotificationsPanelState(false);
   }
 
   private initializeNotifications() {
@@ -157,8 +160,25 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
     if (isMobile) {
       navbar.setAttribute('inert', '');
+      this.setNotificationsPanelState(false);
     } else {
       navbar.removeAttribute('inert');
+    }
+  }
+
+  toggleNotificationsPanel() {
+    this.setNotificationsPanelState(!this.notificationsPanelOpen);
+  }
+
+  closeNotificationsPanel() {
+    this.setNotificationsPanelState(false);
+  }
+
+  private setNotificationsPanelState(open: boolean) {
+    this.notificationsPanelOpen = open;
+    const container = document.querySelector('.body');
+    if (container) {
+      container.classList.toggle('notifications-open', open);
     }
   }
 
