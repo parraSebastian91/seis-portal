@@ -39,6 +39,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
   notificationSections$ = this.notificationsSubject.asObservable();
   notificationSections: NotificationSection[] = [];
   notificationsPanelOpen = false;
+  selectedFilter: string | null = null;
+  filteredSections: NotificationSection[] = [];
   
   mediaQuery$ = new Observable<boolean>(observer => {
     const mq = window.matchMedia('(width < 700px)');
@@ -73,9 +75,25 @@ export class NavbarComponent implements OnInit, OnDestroy {
     // Suscribirse a cambios
     this.notificationSections$.subscribe(sections => {
       this.notificationSections = sections;
+      this.applyFilter();
     });
   }
 
+  applyFilter() {
+    if (this.selectedFilter === null) {
+      this.filteredSections = this.notificationSections;
+    } else {
+      this.filteredSections = this.notificationSections.filter(
+        section => section.id === this.selectedFilter
+      );
+    }
+  }
+
+  selectFilter(filterId: string | null) {
+    this.selectedFilter = filterId;
+    this.applyFilter();
+  }
+  
   ngOnDestroy() {
     // Clean up listener
     if (this.mediaQuery && this.mediaQueryListener) {

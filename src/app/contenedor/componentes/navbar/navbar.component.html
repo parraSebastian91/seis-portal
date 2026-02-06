@@ -35,8 +35,28 @@
             <mat-icon>close</mat-icon>
         </button>
     </div>
-    <div class="panel-content">
+
+    <!-- Filtros tipo Chips -->
+    <div class="filter-chips">
+        <button class="chip" 
+                [class.active]="selectedFilter === null" 
+                (click)="selectFilter(null)"
+                aria-label="mostrar todas las notificaciones">
+            Todas
+        </button>
         @for (section of notificationSections; track section.id) {
+            <button class="chip" 
+                    [class.active]="selectedFilter === section.id"
+                    (click)="selectFilter(section.id)"
+                    [attr.aria-label]="'filtrar por ' + section.name">
+                <mat-icon class="chip-icon">{{section.icon}}</mat-icon>
+                <span>{{section.name}}</span>
+            </button>
+        }
+    </div>
+
+    <div class="panel-content">
+        @for (section of filteredSections; track section.id) {
             <div class="panel-section">
                 <div class="section-header">
                     <mat-icon>{{section.icon}}</mat-icon>

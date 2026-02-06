@@ -209,6 +209,48 @@ nav a.accent-link {
   }
 }
 
+// Filtros tipo Chips
+.filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--line-clr);
+  margin-bottom: 0.75rem;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.75rem;
+  background-color: var(--background-body);
+  border: 1px solid var(--line-clr);
+  color: var(--font-color);
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: var(--hover-color);
+    border-color: var(--accent-color);
+  }
+
+  &.active {
+    background-color: var(--focus-background);
+    color: #ffffff;
+    border-color: var(--accent-color);
+  }
+
+  .chip-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+}
+
 .panel-content {
   flex: 1;
   overflow-y: auto;
