@@ -316,7 +316,7 @@ app-navbar {
   grid-area: main;
   margin-left: 260px;
   margin-top: 0;
-  padding: 1rem;
+  //padding: 1rem;
   box-sizing: border-box;
   overflow-y: auto;
   overflow-x: hidden;
@@ -377,7 +377,7 @@ main {
     margin-top: 0px;
     margin-bottom: 60px;
     height: calc(100vh - 60px);
-    padding: 1rem;
+    //padding: 1rem;
     box-sizing: border-box;
     transform: none;
   }

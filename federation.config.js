@@ -1,10 +1,13 @@
 const { withNativeFederation, shareAll } = require('@angular-architects/native-federation/config');
+const { sharedConfig } = require('../../shared-federation.config');
 
 module.exports = withNativeFederation({
 
-  shared: {
-    ...shareAll({ singleton: true, strictVersion: true, requiredVersion: 'auto' }),
-  },
+  // shared: {
+  //   ...shareAll({ singleton: true, strictVersion: true, requiredVersion: 'auto' }),
+  //   '@angular/material/menu': { singleton: true, strictVersion: true, requiredVersion: 'auto' },
+  // },
+  shared: sharedConfig,
 
   skip: [
     'rxjs/ajax',
