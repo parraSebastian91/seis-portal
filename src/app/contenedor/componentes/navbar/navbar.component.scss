@@ -133,6 +133,8 @@ nav a.accent-link {
   display: flex;
   align-items: center;
   position: relative;
+  margin-top: 10px;
+  margin-right: 10px;
 }
 
 .notifications-btn {
@@ -140,22 +142,42 @@ nav a.accent-link {
   border: none;
   color: var(--background-body);
   cursor: pointer;
-  padding: 0.5rem;
+  padding: 0.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 0.5rem;
+  border-radius: 50%;
   transition: background-color 0.3s;
 
   &:hover {
     background-color: var(--focus-background);
+    color: var(--font-color)
   }
 
   mat-icon {
     font-size: 24px;
     width: 24px;
     height: 24px;
+    position: relative;
   }
+}
+
+// Estilos para el badge de Angular Material (fuera del botón)
+::ng-deep .notifications-btn mat-icon .mat-badge-content {
+  background-color: #f44336 !important;
+  color: white !important;
+  font-weight: 600 !important;
+  font-size: 12px !important;
+  font-family: Roboto, "Helvetica Neue", sans-serif !important;
+  min-width: 22px !important;
+  width: auto !important;
+  height: 15px !important;
+  line-height: 22px !important;
+  padding: 0 6px !important;
+  border-radius: 11px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 
 .notifications-panel {

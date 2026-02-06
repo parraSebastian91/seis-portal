@@ -19,10 +19,11 @@
         <li class="notifications-container" *ngIf="!(mediaQuery$ | async)">
             <button class="notifications-btn" (click)="toggleNotificationsPanel()"
                     [attr.aria-expanded]="notificationsPanelOpen"
-                    [matBadge]="totalNotifications" matBadgeColor="warn" 
-                    [matBadgeHidden]="totalNotifications === 0"
                     aria-label="notificaciones">
-                <mat-icon aria-hidden="false">notifications</mat-icon>
+                <mat-icon aria-hidden="false"
+                          [matBadge]="totalNotifications" 
+                          matBadgeColor="warn" 
+                          [matBadgeHidden]="totalNotifications === 0">notifications</mat-icon>
             </button>
         </li>
     </ul>

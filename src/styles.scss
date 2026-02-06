@@ -19,6 +19,24 @@
   --mdc-theme-secondary: var(--accent);
   --mdc-theme-surface: var(--background);
   --mdc-theme-on-primary: var(--on-primary);
+
+  /* Variables para Material Badge */
+  --mat-badge-background-color: #f44336;
+  --mat-badge-text-color: #ffffff;
+  --mat-badge-disabled-state-background-color: #b9b9b9;
+  --mat-badge-disabled-state-text-color: rgba(0, 0, 0, 0.38);
+  --mat-badge-legacy-container-size: 22px;
+  --mat-badge-legacy-small-size-container-size: 16px;
+  --mat-badge-legacy-large-size-container-size: 28px;
+  --mat-badge-container-size: 16px;
+  --mat-badge-small-size-container-size: 6px;
+  --mat-badge-large-size-container-size: 22px;
+  --mat-badge-legacy-container-overlap-offset: -11px;
+  --mat-badge-legacy-small-size-container-overlap-offset: -8px;
+  --mat-badge-legacy-large-size-container-overlap-offset: -14px;
+  --mat-badge-container-overlap-offset: -8px;
+  --mat-badge-small-size-container-overlap-offset: -3px;
+  --mat-badge-large-size-container-overlap-offset: -11px;
 }
 
 html, body { height: 100%; }
