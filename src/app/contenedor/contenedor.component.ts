@@ -6,7 +6,7 @@ import { ThemeService } from 'shared-utils';
 import { IMenu, ISidebarMenu } from '../interface/menu.interface';
 import { SesionService } from '../service/sesion.service';
 import { IUsuario } from '../interface/usuario.interface';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-contenedor',
@@ -42,7 +42,8 @@ export class ContenedorComponent implements OnInit {
   constructor(
     private themeService: ThemeService,
     private _sesionService: SesionService,
-    private router: Router
+    private router: Router,
+    private activatedRoute: ActivatedRoute
     
   ) {
     this.nameApp = environment.nameApp;
@@ -73,8 +74,14 @@ export class ContenedorComponent implements OnInit {
     });
   }
 
+  /**
+   * Navega a una ruta relativa dentro del Portal
+   * Ejemplos:
+   *   goTo('pages/view-profile') -> /portal/contenedor/pages/view-profile
+   *   goTo('pages/edit-profile') -> /portal/contenedor/pages/edit-profile
+   */
   goTo(ruta: string) {
-    this.router.navigate([ruta]);
+    this.router.navigate([ruta], { relativeTo: this.activatedRoute });
   }
 
   //========================== SIDEBAR METHODS ========================//
