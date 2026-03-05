@@ -1,7 +1,7 @@
 export const environment = {
     nameApp: 'ERP Seis',
     BFF: '/security/bff',
-    msAuth: '/security',
+    msAuth: '/api/auth/security',
     msErp: 'http://localhost:3001',
     msSession: 'http://localhost:3002',
     appLogin: '/pages/login',

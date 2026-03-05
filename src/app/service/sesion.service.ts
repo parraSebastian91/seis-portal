@@ -43,7 +43,7 @@ export class SesionService {
       typeDevice: this.detectDeviceType()
     };
 
-    const obs$ = this.http.post<any>(`${base + environment.msAuth}/auth/callback`, body, { withCredentials: true })
+    const obs$ = this.http.post<any>(`${base + environment.msAuth}/callback`, body, { withCredentials: true })
       .pipe(
         catchError(error => {
           console.error('Error fetching session:', error);
