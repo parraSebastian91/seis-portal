@@ -6,6 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { CallbackInterface } from '../interface/request/callback.interface';
 import { ConfigService } from './config.service';
+import { Sistema, SystemNavigationDTO } from './interfaces/SystemNavigator.dto';
 
 @Injectable({
   providedIn: 'root'
@@ -55,18 +56,8 @@ export class SesionService {
 
   async getPortalData(): Promise<boolean> {
     const base = this.config.getApiBase(); // usa origen configurado
-    const body = {
-      getSistemas: {
-        metodo: "GET",
-        ruta: "core/sistema/:username:" // el bff reemplaza el username con el de la session activa
-      },
-      getContacto: {
-        metodo: "GET",
-        ruta: "core/contacto/username/:username:"
-      }
-    }
 
-    const obs$ = this.http.post<any>(`${base + environment.BFF}/services`, body, { withCredentials: true })
+    const obs$ = this.http.get<SystemNavigationDTO>(`${base + environment.BFF}/portal/menu`, { withCredentials: true })
       .pipe(
         catchError(error => {
           console.error('Error fetching session:', error);
@@ -76,25 +67,25 @@ export class SesionService {
     const dataResponse = await firstValueFrom(obs$)
     console.log('dataResponse', dataResponse);
     if (dataResponse) {
-      const sidebarMenus = dataResponse.getSistemas.sistemas;
-      this.menu.next(sidebarMenus.map((sistema: any) => ({
+      const sidebarMenus = dataResponse.organizacion[0].sistemas;
+      this.menu.next(sidebarMenus.map((sistema: Sistema) => ({
         icono: sistema.icono || 'apps',
         nombre: sistema.nombre,
-        ruta: sistema.modulos.length === 0 ? `${sistema.path.toLowerCase()}` : undefined,
+        ruta: sistema.modulos.length === 0 ? `${sistema.ruta.toLowerCase()}` : undefined,
         subMenus: sistema.modulos.length > 0 ? sistema.modulos.map((menu: any) => (
           {
             icono: menu.icono || 'menu',
             nombre: menu.nombre,
-            ruta: `${sistema.path.toLowerCase()}/${menu.path.toLowerCase()}`
+            ruta: `${sistema.ruta.toLowerCase()}/${menu.ruta.toLowerCase()}`
           })
         ) : undefined
       })));
 
       this.usuario.next({
-        nombre: dataResponse.getContacto.nombre,
-        username: dataResponse.getSistemas.username,
-        correo: dataResponse.getContacto.correo.primitiveValue,
-        base64Img: dataResponse.getContacto.imgBase64 || 'https://www.w3schools.com/howto/img_avatar.png'
+        nombre: dataResponse.contacto.nombres,
+        username: dataResponse.contacto.usuario,
+        correo: dataResponse.contacto.correo,
+        base64Img: dataResponse.contacto.avatar || 'https://www.w3schools.com/howto/img_avatar.png'
       });
       return true;
     }
@@ -102,7 +93,7 @@ export class SesionService {
   }
 
   logout(): Promise<any> {
-    const obs$ = this.http.get<any>(`${environment.msAuth}/auth/logout`, { withCredentials: true })
+    const obs$ = this.http.get<any>(`${environment.msAuth}/logout`, { withCredentials: true })
       .pipe(
         catchError(error => {
           console.error('Error during logout:', error);
@@ -124,7 +115,7 @@ export class SesionService {
   }
 
   refreshSession(): Promise<any> {
-    const obs$ = this.http.post<any>(`${environment.msAuth}/auth/session/refresh`, { typeDevice: this.detectDeviceType() }, { withCredentials: true })
+    const obs$ = this.http.post<any>(`${environment.msAuth}/session/refresh`, { typeDevice: this.detectDeviceType() }, { withCredentials: true })
       .pipe(
         catchError(error => {
           console.error('Error during refresh session:', error);
