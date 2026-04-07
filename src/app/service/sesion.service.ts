@@ -7,6 +7,7 @@ import { environment } from '../../environments/environment';
 import { CallbackInterface } from '../interface/request/callback.interface';
 import { ConfigService } from './config.service';
 import { Sistema, SystemNavigationDTO } from './interfaces/SystemNavigator.dto';
+import { ApiResponse } from '../../../../shared-utils/src/lib/services/types/api-response.model';
 
 @Injectable({
   providedIn: 'root'
@@ -57,14 +58,15 @@ export class SesionService {
   async getPortalData(): Promise<boolean> {
     const base = this.config.getApiBase(); // usa origen configurado
 
-    const obs$ = this.http.get<SystemNavigationDTO>(`${base + environment.BFF}/portal/menu`, { withCredentials: true })
+    const obs$ = this.http.get<ApiResponse<SystemNavigationDTO>>(`${base + environment.BFF}/portal/menu`, { withCredentials: true })
       .pipe(
         catchError(error => {
           console.error('Error fetching session:', error);
           throw error;
         })
       );
-    const dataResponse = await firstValueFrom(obs$)
+    const serviceRespunse = await firstValueFrom(obs$);
+    const dataResponse = serviceRespunse.data;
     console.log('dataResponse', dataResponse);
     if (dataResponse) {
       const sidebarMenus = dataResponse.organizacion[0].sistemas;
