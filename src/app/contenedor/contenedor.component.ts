@@ -1,8 +1,7 @@
 
 import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { environment } from '../../environments/environment';
-import { AppTheme } from '../../../../shared-utils/src/lib/theme/theme.interface';
-import { ThemeService } from 'shared-utils';
+import { AppTheme, ThemeService } from 'shared-utils';
 import { IMenu, ISidebarMenu } from '../interface/menu.interface';
 import { SesionService } from '../service/sesion.service';
 import { IUsuario } from '../interface/usuario.interface';
