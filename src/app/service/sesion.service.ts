@@ -95,7 +95,8 @@ export class SesionService {
   }
 
   logout(): Promise<any> {
-    const obs$ = this.http.get<any>(`${environment.msAuth}/logout`, { withCredentials: true })
+    const base = this.config.getApiBase();
+    const obs$ = this.http.get<any>(`${base + environment.msAuth}/logout`, { withCredentials: true })
       .pipe(
         catchError(error => {
           console.error('Error during logout:', error);
@@ -106,7 +107,8 @@ export class SesionService {
   }
 
   testSession(): Promise<any> {
-    const obs$ = this.http.get<any>(`${environment.msAuth}/auth/session/test`, { withCredentials: true })
+    const base = this.config.getApiBase();
+    const obs$ = this.http.get<any>(`${base + environment.msAuth}/session/test`, { withCredentials: true })
       .pipe(
         catchError(error => {
           console.error('Error during test session:', error);
@@ -117,7 +119,8 @@ export class SesionService {
   }
 
   refreshSession(): Promise<any> {
-    const obs$ = this.http.post<any>(`${environment.msAuth}/session/refresh`, { typeDevice: this.detectDeviceType() }, { withCredentials: true })
+    const base = this.config.getApiBase();
+    const obs$ = this.http.post<any>(`${base + environment.msAuth}/session/refresh`, { typeDevice: this.detectDeviceType() }, { withCredentials: true })
       .pipe(
         catchError(error => {
           console.error('Error during refresh session:', error);

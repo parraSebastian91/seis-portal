@@ -16,8 +16,14 @@ export class SessionRefreshInterceptor implements HttpInterceptor {
   ) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    const isRefreshRequest = req.url.includes('/session/refresh');
+
     return next.handle(req).pipe(
       catchError((error: HttpErrorResponse) => {
+        if (isRefreshRequest) {
+          return throwError(() => error);
+        }
+
         // Detecta si la sesión expiró (código 401 o mensaje específico)
         if (error.status === 401 || error.error?.message?.includes('Token inválido o expirado')) {
           return this.handle401Error(req, next);
