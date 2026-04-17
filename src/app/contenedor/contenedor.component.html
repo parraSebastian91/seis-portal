@@ -45,11 +45,11 @@
       <li class="user-profile">
         <div class="user-info">
           <div class="user-avatar">
-            <img [src]="usuario?.base64Img || 'assets/default-avatar.png'" alt="Avatar">
+            <img [src]="avatarSrc() || 'assets/default-avatar.png'" alt="Avatar">
           </div>
           <div class="user-details">
-            <span class="user-name">{{usuario?.nombre || 'Usuario'}}</span>
-            <span class="user-email">{{usuario?.correo || 'email@ejemplo.com'}}</span>
+            <span class="user-name">{{displayName() || 'Usuario'}}</span>
+            <span class="user-email">{{userEmail() || usuario?.correo || 'email@ejemplo.com'}}</span>
           </div>
         </div>
         <button class="logout-btn" [matMenuTriggerFor]="menu" title="Cerrar sesión">

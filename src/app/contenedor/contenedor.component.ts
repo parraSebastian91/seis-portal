@@ -1,7 +1,7 @@
 
 import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { environment } from '../../environments/environment';
-import { AppTheme, ThemeService } from 'shared-utils';
+import { AppTheme, ThemeService, UserStateService } from 'shared-utils';
 import { IMenu, ISidebarMenu } from '../interface/menu.interface';
 import { SesionService } from '../service/sesion.service';
 import { IUsuario } from '../interface/usuario.interface';
@@ -24,6 +24,18 @@ export class ContenedorComponent implements OnInit {
     base64Img: ''
   };;
 
+  get avatarSrc() {
+    return this.userStateService.avatarSrc;
+  }
+
+  get displayName() {
+    return this.userStateService.displayName;
+  }
+
+  get userEmail() {
+    return this.userStateService.email;
+  }
+
   @ViewChild('sidebar', { static: true }) sidebar?: ElementRef<HTMLElement>;
   @ViewChild('toggleBtn', { static: true }) toggleButton?: ElementRef<HTMLElement>;
 
@@ -42,7 +54,8 @@ export class ContenedorComponent implements OnInit {
     private themeService: ThemeService,
     private _sesionService: SesionService,
     private router: Router,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private userStateService: UserStateService
     
   ) {
     this.nameApp = environment.nameApp;
@@ -50,7 +63,21 @@ export class ContenedorComponent implements OnInit {
 
   ngOnInit() {
     this._sesionService.menu$.subscribe(menu => this.menus = menu);
-    this._sesionService.usuario$.subscribe(usuario => this.usuario = usuario);
+    this._sesionService.usuario$.subscribe(usuario => {
+      this.usuario = usuario;
+
+      this.userStateService.patch({
+        username: usuario?.username || '',
+        NombreCompleto: usuario?.nombre || '',
+        email: usuario?.correo || ''
+      });
+
+      if (usuario?.base64Img) {
+        this.userStateService.setAvatar(usuario.base64Img);
+      }
+
+      this.userStateService.setStatus('READY');
+    });
     const loaded = this.themeService.loadTheme();
     if (loaded) this.theme = loaded; 
   }

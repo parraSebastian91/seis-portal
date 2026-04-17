@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { SesionService } from '../../service/sesion.service';
 import { Router } from '@angular/router';
+import { UserImageSet, UserProfileService, UserStateService } from 'shared-utils';
 
 @Component({
   selector: 'app-inicio',
@@ -25,6 +26,8 @@ export class InicioComponent implements OnInit, OnDestroy {
 
   constructor(
     private sesionService: SesionService,
+    private userProfileService: UserProfileService,
+    private userStateService: UserStateService,
     private router: Router
   ) { }
 
@@ -32,6 +35,15 @@ export class InicioComponent implements OnInit, OnDestroy {
     this.startCycle(this.period);
     const success = await this.sesionService.getPortalData();
     if (success) {
+      const user = await this.userProfileService.getUserImage();
+      if (user) {
+        const userImageSet: UserImageSet = {
+          small: user.avatar.sm.path,
+          medium: user.avatar.md.path,
+          large: user.avatar.lg.path
+        }
+        this.userStateService.setAvatar(userImageSet);
+      }
       setTimeout(() => {
         this.router.navigate(['/contenedor/pages']);
       }, 3000);
