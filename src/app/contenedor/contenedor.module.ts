@@ -16,6 +16,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatMenuModule } from '@angular/material/menu';
 import { MenuComponent } from './componentes/menu/menu.component';
 import { NavbarComponent } from './componentes/navbar/navbar.component';
+import { TopNavbarComponent } from './componentes/top-navbar/top-navbar.component';
 import { RouterModule } from '@angular/router';
 import {MatBadgeModule} from '@angular/material/badge';
 @NgModule({
@@ -23,6 +24,7 @@ import {MatBadgeModule} from '@angular/material/badge';
     ContenedorComponent,
     MenuComponent,
     NavbarComponent,
+    TopNavbarComponent,
     PerfilComponent
   ],
   imports: [

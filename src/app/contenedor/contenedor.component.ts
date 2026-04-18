@@ -152,6 +152,13 @@ export class ContenedorComponent implements OnInit {
     this.goTo(`factoring/${target.value}`);
   }
 
+  onFactoringValueChange(value: string) {
+    if (!value) return;
+
+    this.selectedFactoring = value;
+    this.goTo(`factoring/${value}`);
+  }
+
   toggleNotificationsPanel() {
     this.layoutStateService.toggleNotificationsPanelState();
   }
