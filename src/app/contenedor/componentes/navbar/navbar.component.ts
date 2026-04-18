@@ -1,22 +1,8 @@
-import { Component, ElementRef, OnInit, OnDestroy, ViewChild } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Component, ElementRef, Inject, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Observable } from 'rxjs';
 import { SesionService } from '../../../service/sesion.service';
 import { environment } from '../../../../environments/environment';
-
-interface Notification {
-  id: string;
-  title: string;
-  timestamp: Date;
-  read: boolean;
-}
-
-interface NotificationSection {
-  id: string;
-  name: string;
-  icon: string;
-  notifications: Notification[];
-}
+import { LayoutStateService, NotificationCenterService, NotificationSection } from 'shared-utils';
 
 @Component({
   selector: 'app-navbar',
@@ -35,8 +21,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   private mediaQueryListener: ((e: MediaQueryListEvent) => void) | null = null;
 
   // Notificaciones
-  private notificationsSubject = new BehaviorSubject<NotificationSection[]>([]);
-  notificationSections$ = this.notificationsSubject.asObservable();
+  notificationSections$!: Observable<NotificationSection[]>;
   notificationSections: NotificationSection[] = [];
   notificationsPanelOpen = false;
   selectedFilter: string | null = null;
@@ -51,14 +36,20 @@ export class NavbarComponent implements OnInit, OnDestroy {
   });
 
   get totalNotifications(): number {
-    return this.notificationSections.reduce((sum, section) => 
-      sum + section.notifications.filter(n => !n.read).length, 0
-    );
+    return this.notificationCenterService.totalUnread;
   }
 
-  constructor( private sesionService: SesionService ) { }
+  constructor(
+    private sesionService: SesionService,
+    @Inject(LayoutStateService) private layoutStateService: LayoutStateService,
+    @Inject(NotificationCenterService) private notificationCenterService: NotificationCenterService
+  ) { }
 
   ngOnInit() {
+    this.layoutStateService.notificationsPanelOpen$.subscribe((open: boolean) => {
+      this.notificationsPanelOpen = open;
+    });
+
     // Initialize media query
     this.mediaQuery = window.matchMedia('(width < 700px)');
     this.mediaQueryListener = (e) => this.updateNavbar(e);
@@ -70,10 +61,11 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.updateNavbar(this.mediaQuery);
 
     // Inicializar notificaciones
-    this.initializeNotifications();
+    this.notificationCenterService.ensureInitializedWithMockData();
+    this.notificationSections$ = this.notificationCenterService.sections$;
 
     // Suscribirse a cambios
-    this.notificationSections$.subscribe(sections => {
+    this.notificationSections$.subscribe((sections: NotificationSection[]) => {
       this.notificationSections = sections;
       this.applyFilter();
     });
@@ -103,70 +95,16 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.setNotificationsPanelState(false);
   }
 
-  private initializeNotifications() {
-    // Datos de ejemplo - reemplazar con datos reales del servicio
-    const mockSections: NotificationSection[] = [
-      {
-        id: 'orders',
-        name: 'Pedidos',
-        icon: 'shopping_cart',
-        notifications: [
-          { id: '1', title: 'Nuevo pedido #12345', timestamp: new Date(Date.now() - 3600000), read: false },
-          { id: '2', title: 'Pedido #12344 actualizado', timestamp: new Date(Date.now() - 7200000), read: false }
-        ]
-      },
-      {
-        id: 'invoices',
-        name: 'Facturas',
-        icon: 'receipt',
-        notifications: [
-          { id: '3', title: 'Factura #F-001 emitida', timestamp: new Date(Date.now() - 1800000), read: true }
-        ]
-      },
-      {
-        id: 'messages',
-        name: 'Mensajes',
-        icon: 'mail',
-        notifications: [
-          { id: '4', title: 'Nuevo mensaje de Admin', timestamp: new Date(Date.now() - 600000), read: false },
-          { id: '5', title: 'Mensaje del Sistema', timestamp: new Date(Date.now() - 900000), read: false },
-          { id: '6', title: 'Respuesta a tu consulta', timestamp: new Date(Date.now() - 1200000), read: true }
-        ]
-      },
-      {
-        id: 'alerts',
-        name: 'Alertas',
-        icon: 'warning',
-        notifications: []
-      }
-    ];
-
-    this.notificationsSubject.next(mockSections);
-  }
-
   markAsRead(notificationId: string) {
-    const sections = this.notificationSections.map(section => ({
-      ...section,
-      notifications: section.notifications.map(notif =>
-        notif.id === notificationId ? { ...notif, read: true } : notif
-      )
-    }));
-    this.notificationsSubject.next(sections);
+    this.notificationCenterService.markAsRead(notificationId);
   }
 
   clearSection(sectionId: string) {
-    const sections = this.notificationSections.map(section =>
-      section.id === sectionId ? { ...section, notifications: [] } : section
-    );
-    this.notificationsSubject.next(sections);
+    this.notificationCenterService.clearSection(sectionId);
   }
 
   clearAllNotifications() {
-    const sections = this.notificationSections.map(section => ({
-      ...section,
-      notifications: []
-    }));
-    this.notificationsSubject.next(sections);
+    this.notificationCenterService.clearAll();
   }
 
   updateNavbar(media: MediaQueryList | MediaQueryListEvent) {
@@ -185,19 +123,15 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   toggleNotificationsPanel() {
-    this.setNotificationsPanelState(!this.notificationsPanelOpen);
+    this.layoutStateService.toggleNotificationsPanelState();
   }
 
   closeNotificationsPanel() {
-    this.setNotificationsPanelState(false);
+    this.layoutStateService.setNotificationsPanelState(false);
   }
 
   private setNotificationsPanelState(open: boolean) {
-    this.notificationsPanelOpen = open;
-    const container = document.querySelector('.body');
-    if (container) {
-      container.classList.toggle('notifications-open', open);
-    }
+    this.layoutStateService.setNotificationsPanelState(open);
   }
 
   openSidebar() {

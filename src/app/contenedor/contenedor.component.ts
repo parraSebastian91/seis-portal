@@ -1,7 +1,7 @@
 
-import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { environment } from '../../environments/environment';
-import { AppTheme, ThemeService, UserStateService } from 'shared-utils';
+import { AppTheme, LayoutStateService, NotificationCenterService, NotificationSection, ThemeService, UserStateService } from 'shared-utils';
 import { IMenu, ISidebarMenu } from '../interface/menu.interface';
 import { SesionService } from '../service/sesion.service';
 import { IUsuario } from '../interface/usuario.interface';
@@ -15,6 +15,9 @@ import { Router, ActivatedRoute } from '@angular/router';
 })
 export class ContenedorComponent implements OnInit {
   nameApp = '';
+  notificationsPanelOpen = false;
+  totalNotifications = 0;
+  badgePulse = false;
 
   factoringOptions = [
     { label: 'Dashboard Facturas', value: 'dashboard' },
@@ -42,6 +45,14 @@ export class ContenedorComponent implements OnInit {
     return this.userStateService.email;
   }
 
+  get notificationBadgeText(): string {
+    if (!this.totalNotifications || this.totalNotifications <= 0) {
+      return '';
+    }
+
+    return this.totalNotifications > 99 ? '99+' : String(this.totalNotifications);
+  }
+
   @ViewChild('sidebar', { static: true }) sidebar?: ElementRef<HTMLElement>;
   @ViewChild('toggleBtn', { static: true }) toggleButton?: ElementRef<HTMLElement>;
 
@@ -61,13 +72,34 @@ export class ContenedorComponent implements OnInit {
     private _sesionService: SesionService,
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    private userStateService: UserStateService
+    private userStateService: UserStateService,
+    @Inject(LayoutStateService) private layoutStateService: LayoutStateService,
+    @Inject(NotificationCenterService) private notificationCenterService: NotificationCenterService
 
   ) {
     this.nameApp = environment.nameApp;
   }
 
   ngOnInit() {
+    this.layoutStateService.notificationsPanelOpen$.subscribe((open: boolean) => {
+      this.notificationsPanelOpen = open;
+    });
+
+    this.notificationCenterService.ensureInitializedWithMockData();
+    this.notificationCenterService.sections$.subscribe((sections: NotificationSection[]) => {
+      const nextTotal = sections.reduce(
+        (sum: number, section: NotificationSection) =>
+          sum + section.notifications.filter((notification) => !notification.read).length,
+        0
+      );
+
+      if (nextTotal > 0 && nextTotal !== this.totalNotifications) {
+        this.triggerBadgePulse();
+      }
+
+      this.totalNotifications = nextTotal;
+    });
+
     this._sesionService.menu$.subscribe(menu => this.menus = menu);
     this._sesionService.usuario$.subscribe(usuario => {
       this.usuario = usuario;
@@ -118,6 +150,21 @@ export class ContenedorComponent implements OnInit {
 
     this.selectedFactoring = target.value;
     this.goTo(`factoring/${target.value}`);
+  }
+
+  toggleNotificationsPanel() {
+    this.layoutStateService.toggleNotificationsPanelState();
+  }
+
+  private triggerBadgePulse() {
+    this.badgePulse = false;
+    requestAnimationFrame(() => {
+      this.badgePulse = true;
+    });
+  }
+
+  private setNotificationsPanelState(open: boolean) {
+    this.layoutStateService.setNotificationsPanelState(open);
   }
 
   //========================== SIDEBAR METHODS ========================//

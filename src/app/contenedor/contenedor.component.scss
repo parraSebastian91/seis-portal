@@ -41,8 +41,6 @@ body {
 #sidebar.close {
   width: 50px;
 }
-
-// App navbar se posiciona relativo al ancho del sidebar
 #sidebar~app-navbar {
   position: fixed;
   top: 0;
@@ -98,7 +96,6 @@ app-navbar {
   background: #ffffff;
   color: #1f2937;
   outline: none;
-
   &:focus {
     border-color: var(--focus-background);
     box-shadow: 0 0 0 3px rgba(94, 99, 255, 0.2);
@@ -109,24 +106,6 @@ app-navbar {
   display: flex;
   align-items: center;
   gap: 0.65rem;
-}
-
-.top-navbar-btn {
-  border: none;
-  border-radius: 10px;
-  padding: 0.52rem 0.95rem;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.top-navbar-btn.secondary {
-  background: #eaf0f8;
-  color: #1f2937;
-}
-
-.top-navbar-btn.primary {
-  background: var(--focus-background);
-  color: #ffffff;
 }
 
 #sidebar ul {
@@ -140,7 +119,6 @@ app-navbar {
   display: flex;
   justify-content: flex-end;
   margin-bottom: 16px;
-
   .logo {
     font-weight: 600;
   }
@@ -148,7 +126,6 @@ app-navbar {
 
 #sidebar ul li.active a {
   color: var(--focus-background);
-
   .svg {
     fill: var(--focus-background);
   }
@@ -194,7 +171,6 @@ app-navbar {
   display: grid;
   grid-template-rows: 0fr;
   transition: 300ms ease-in-out;
-
   >div {
     overflow: hidden;
   }
@@ -233,7 +209,6 @@ app-navbar {
   background-color: var(--focus-background);
 }
 
-// User profile section - pegado a la base del sidebar
 .user-profile {
   display: flex;
   margin-top: auto !important;
@@ -300,11 +275,6 @@ app-navbar {
       }
     }
   }
-
-  .logout-btn-img {
-    display: none;
-  }
-
 
   .logout-btn {
     width: 100%;
@@ -410,6 +380,7 @@ app-navbar {
     transform: translateX(0);
     border-radius: 0;
   }
+
   to {
     transform: translateX(-320px);
     border-radius: 50px;
@@ -494,7 +465,7 @@ main {
     width: 100%;
     left: 0;
     top: unset;
-    bottom: 0;  
+    bottom: 0;
     z-index: 110;
     border-right: none;
     border-top: 1px solid var(--line-clr);
@@ -568,5 +539,49 @@ main {
 
   #sidebar.close {
     width: 100%;
+  }
+}
+.btn-mini-fab {
+  width: 40px;
+  height: 40px;
+  background-color: #d7e3ff;
+  border-radius: 12px;
+  color: #00458f;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, .18);
+  border: unset;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+::ng-deep .btn-mini-fab mat-icon .mat-badge-content {
+  min-width: 20px !important;
+  height: 20px !important;
+  line-height: 20px !important;
+  padding: 0 5px !important;
+  border-radius: 10px !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  font-family: Roboto, "Helvetica Neue", sans-serif !important;
+  color: #fff !important;
+  letter-spacing: 0 !important;
+}
+
+.btn-mini-fab.badge-pulse {
+  ::ng-deep .mat-badge-content {
+    animation: notificationBadgePulse 420ms ease-out;
+  }
+}
+
+@keyframes notificationBadgePulse {
+  0% {
+    transform: scale(1);
+  }
+  45% {
+    transform: scale(1.24);
+  }
+  100% {
+    transform: scale(1);
   }
 }
