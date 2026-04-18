@@ -16,6 +16,12 @@ import { Router, ActivatedRoute } from '@angular/router';
 export class ContenedorComponent implements OnInit {
   nameApp = '';
 
+  factoringOptions = [
+    { label: 'Dashboard Facturas', value: 'dashboard' },
+    { label: 'Publicador Facturas', value: 'publicador-facturas' }
+  ];
+  selectedFactoring = 'dashboard';
+
   menus: ISidebarMenu[] = [] as ISidebarMenu[];
   usuario?: IUsuario = {
     nombre: 'Usuario Demo',
@@ -56,7 +62,7 @@ export class ContenedorComponent implements OnInit {
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private userStateService: UserStateService
-    
+
   ) {
     this.nameApp = environment.nameApp;
   }
@@ -79,7 +85,7 @@ export class ContenedorComponent implements OnInit {
       this.userStateService.setStatus('READY');
     });
     const loaded = this.themeService.loadTheme();
-    if (loaded) this.theme = loaded; 
+    if (loaded) this.theme = loaded;
   }
 
   apply() {
@@ -92,12 +98,8 @@ export class ContenedorComponent implements OnInit {
     if (loaded) this.theme = loaded;
   }
 
-  testingSession(ruta: string) {
-    this._sesionService.testSession().then((data) => {
-      console.log(data);
-    }).catch((error) => {
-      console.log(error);
-    });
+  navigate(ruta: string) {
+    this.router.navigate([ruta], { relativeTo: this.activatedRoute });
   }
 
   /**
@@ -108,6 +110,14 @@ export class ContenedorComponent implements OnInit {
    */
   goTo(ruta: string) {
     this.router.navigate([ruta], { relativeTo: this.activatedRoute });
+  }
+
+  onFactoringChange(event: Event) {
+    const target = event.target as HTMLSelectElement | null;
+    if (!target?.value) return;
+
+    this.selectedFactoring = target.value;
+    this.goTo(`factoring/${target.value}`);
   }
 
   //========================== SIDEBAR METHODS ========================//

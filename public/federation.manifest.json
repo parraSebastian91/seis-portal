@@ -1,3 +1,5 @@
 {
-    "seis-mfe-gestion-usuario": "http://localhost:4201/remoteEntry.json"
+    "seis-mfe-gestion-usuario": "http://localhost:4201/remoteEntry.json",
+    "seis-mfe-dashboard-facturas": "http://localhost:4202/remoteEntry.json",
+    "seis-mfe-publicador-facturas": "http://localhost:4203/remoteEntry.json"
 }

@@ -2,7 +2,7 @@
   <nav id="sidebar" #sidebar>
     <ul>
       <li>
-        <span class="logo">SEIS</span>
+        <span class="logo">{{nameApp}}</span>
         <button (click)="toggleSidebar()" id="toggle-btn" #toggleBtn>
           <svg class="svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
             fill="#e8eaed">
@@ -35,7 +35,7 @@
           <div>
             @for (subItem of item.subMenus; track $index)
             {
-            <li (click)="testingSession(subItem.ruta!)"><a>{{subItem.nombre}}</a></li>
+            <li (click)="goTo(`pages/${subItem.ruta}`)"><a>{{subItem.nombre}}</a></li>
             }
           </div>
         </ul>
@@ -81,8 +81,29 @@
       </li> -->
     </ul>
   </nav>
-  <app-navbar></app-navbar>
+  <app-navbar></app-navbar> 
+
   <main>
+    <div class="top-navbar">
+      <div class="top-navbar-left">
+        <label class="top-navbar-label" for="factoring-select">Modulo</label>
+        <select id="factoring-select" class="top-navbar-select" [value]="selectedFactoring"
+          (change)="onFactoringChange($event)">
+          @for (option of factoringOptions; track option.value) {
+          <option [value]="option.value">{{option.label}}</option>
+          }
+        </select>
+      </div>
+
+      <div class="top-navbar-actions">
+        <button type="button" class="top-navbar-btn secondary" (click)="goTo('factoring/dashboard')">
+          Dashboard
+        </button>
+        <button type="button" class="top-navbar-btn primary" (click)="goTo('factoring/publicador-facturas')">
+          Publicador
+        </button>
+      </div>
+    </div>
     <router-outlet></router-outlet>
   </main>
 </div>
