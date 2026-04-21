@@ -12,7 +12,7 @@
           </svg>
         </button>
       </li>
-      @for (item of menus; track $index) {
+      @for (item of sidebarMenus(); track $index) {
       @if (item.subMenus?.length == 0 || !item.subMenus) {
       <li>
         <button class="dropdown-btn">
@@ -50,7 +50,7 @@
           </div>
           <div class="user-details">
             <span class="user-name">{{displayName() || 'Usuario'}}</span>
-            <span class="user-email">{{userEmail() || usuario?.correo || 'email@ejemplo.com'}}</span>
+            <span class="user-email">{{email() || 'email@ejemplo.com'}}</span>
           </div>
         </div>
         <button class="logout-btn" [matMenuTriggerFor]="menu" title="Cerrar sesión">
@@ -87,7 +87,7 @@
 
   <main>
     <app-top-navbar
-      [factoringOptions]="factoringOptions"
+      [factoringOptions]="organizationProfile()"
       [selectedFactoring]="selectedFactoring"
       [notificationsPanelOpen]="notificationsPanelOpen"
       [notificationBadgeText]="notificationBadgeText"

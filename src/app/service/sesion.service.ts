@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, catchError, firstValueFrom, map, Observable } from 'rxjs';
-import { IMenu, ISidebarMenu } from '../interface/menu.interface';
-import { IUsuario } from '../interface/usuario.interface';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { CallbackInterface } from '../interface/request/callback.interface';
@@ -13,19 +11,6 @@ import { ApiResponse } from '../../../../shared-utils/src/lib/services/types/api
   providedIn: 'root'
 })
 export class SesionService {
-
-  private menu: BehaviorSubject<ISidebarMenu[]> = new BehaviorSubject<ISidebarMenu[]>([
-    { icono: 'home', nombre: 'Inicio', ruta: 'contenedor/pages/inicio' },
-    { icono: 'person', nombre: 'Usuarios', ruta: 'contenedor/pages/contacto' },
-  ]);
-  private usuario: BehaviorSubject<IUsuario> = new BehaviorSubject<IUsuario>({
-    nombre: 'Sebastian',
-    username: 'sparra',
-    correo: 'parra.sebastian91@gmail.com',
-    base64Img: 'https://www.w3schools.com/howto/img_avatar.png'
-  });
-  public readonly menu$: Observable<ISidebarMenu[]> = this.menu.asObservable();
-  public readonly usuario$: Observable<IUsuario> = this.usuario.asObservable();
 
   constructor(
     private http: HttpClient,
@@ -55,7 +40,7 @@ export class SesionService {
     return await firstValueFrom(obs$);
   }
 
-  async getPortalData(): Promise<boolean> {
+  async getPortalData(): Promise<SystemNavigationDTO> {
     const base = this.config.getApiBase(); // usa origen configurado
 
     const obs$ = this.http.get<ApiResponse<SystemNavigationDTO>>(`${base + environment.BFF}/portal/menu`, { withCredentials: true })
@@ -68,30 +53,7 @@ export class SesionService {
     const serviceRespunse = await firstValueFrom(obs$);
     const dataResponse = serviceRespunse.data;
     console.log('dataResponse', dataResponse);
-    if (dataResponse) {
-      const sidebarMenus = dataResponse.organizacion[0].sistemas;
-      this.menu.next(sidebarMenus.map((sistema: Sistema) => ({
-        icono: sistema.icono || 'apps',
-        nombre: sistema.nombre,
-        ruta: sistema.modulos.length === 0 ? `${sistema.ruta.toLowerCase()}` : undefined,
-        subMenus: sistema.modulos.length > 0 ? sistema.modulos.map((menu: any) => (
-          {
-            icono: menu.icono || 'menu',
-            nombre: menu.nombre,
-            ruta: `${sistema.ruta.toLowerCase()}/${menu.ruta.toLowerCase()}`
-          })
-        ) : undefined
-      })));
-
-      this.usuario.next({
-        nombre: dataResponse.contacto.nombres,
-        username: dataResponse.contacto.usuario,
-        correo: dataResponse.contacto.correo,
-        base64Img: dataResponse.contacto.avatar || 'https://www.w3schools.com/howto/img_avatar.png'
-      });
-      return true;
-    }
-    return false;
+    return dataResponse as SystemNavigationDTO;
   }
 
   logout(): Promise<any> {

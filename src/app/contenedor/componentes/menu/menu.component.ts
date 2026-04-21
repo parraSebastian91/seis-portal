@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SesionService } from '../../../service/sesion.service';
-import { IMenu, ISidebarMenu } from '../../../interface/menu.interface';
 import { Router } from '@angular/router';
 import { AppTheme, ThemeService } from 'shared-utils';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { PerfilComponent } from '../perfil/perfil.component';
+import { ISidebarMenu } from 'shared-utils/lib/services/types/SidebarMenu.type';
 
 @Component({
   selector: 'app-menu',
@@ -37,9 +37,6 @@ export class MenuComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this._sesionService.menu$.subscribe(menu => this.menus = menu);
-    const loaded = this.themeService.loadTheme();
-    if (loaded) this.theme = loaded;
   }
 
   navegar(ruta: string): void {

@@ -18,11 +18,7 @@ export class PerfilComponent implements OnInit {
   constructor(private _sessionSevice: SesionService) {}
 
   ngOnInit(): void {
-    this._sessionSevice.usuario$.subscribe(usuario => {
-      this.dataPerfil.nombre = usuario.nombre;
-      this.dataPerfil.correo = usuario.correo;
-      this.dataPerfil.imgBase64 = usuario.base64Img;
-    });
+    
   }
 
 

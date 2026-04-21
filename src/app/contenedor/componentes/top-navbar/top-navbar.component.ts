@@ -1,9 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { UserOrgProfileState } from 'shared-utils';
 
-export interface FactoringOption {
-  label: string;
-  value: string;
-}
+
 
 @Component({
   selector: 'app-top-navbar',
@@ -12,7 +10,7 @@ export interface FactoringOption {
   styleUrl: './top-navbar.component.scss'
 })
 export class TopNavbarComponent {
-  @Input() factoringOptions: FactoringOption[] = [];
+  @Input() factoringOptions: UserOrgProfileState[] = [];
   @Input() selectedFactoring = '';
   @Input() notificationsPanelOpen = false;
   @Input() notificationBadgeText = '';

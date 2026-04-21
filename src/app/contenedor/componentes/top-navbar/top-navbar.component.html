@@ -4,8 +4,8 @@
             <mat-icon aria-hidden="false">domain</mat-icon></label>
         <select id="factoring-select" class="top-navbar-select" [value]="selectedFactoring"
             (change)="onFactoringChange($event)">
-            @for (option of factoringOptions; track option.value) {
-            <option [value]="option.value">{{ option.label }}</option>
+            @for (option of factoringOptions; track option.uuid) {
+            <option [value]="option.uuid">{{ option.razonSocial }}</option>
             }
         </select>
     </div>

@@ -1,11 +1,10 @@
 
-import { Component, ElementRef, HostListener, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, Inject, OnDestroy, OnInit, Signal, ViewChild } from '@angular/core';
 import { environment } from '../../environments/environment';
-import { AppTheme, LayoutStateService, NotificationCenterService, NotificationSection, ThemeService, UserStateService } from 'shared-utils';
-import { IMenu, ISidebarMenu } from '../interface/menu.interface';
+import { AppTheme, LayoutStateService, NotificationCenterService, NotificationSection, ThemeService, UserOrgProfileState, UserStateService } from 'shared-utils';
 import { SesionService } from '../service/sesion.service';
-import { IUsuario } from '../interface/usuario.interface';
 import { Router, ActivatedRoute } from '@angular/router';
+import { ISidebarMenu } from 'shared-utils/lib/services/types/SidebarMenu.type';
 
 @Component({
   selector: 'app-contenedor',
@@ -19,31 +18,14 @@ export class ContenedorComponent implements OnInit {
   totalNotifications = 0;
   badgePulse = false;
 
-  factoringOptions = [
-    { label: 'Dashboard Facturas', value: 'dashboard' },
-    { label: 'Publicador Facturas', value: 'publicador-facturas' }
-  ];
   selectedFactoring = 'dashboard';
 
-  menus: ISidebarMenu[] = [] as ISidebarMenu[];
-  usuario?: IUsuario = {
-    nombre: 'Usuario Demo',
-    username: 'usuario.demo',
-    correo: 'usuario@ejemplo.com',
-    base64Img: ''
-  };;
-
-  get avatarSrc() {
-    return this.userStateService.avatarSrc;
-  }
-
-  get displayName() {
-    return this.userStateService.displayName;
-  }
-
-  get userEmail() {
-    return this.userStateService.email;
-  }
+  readonly displayName!: Signal<string>;
+  readonly email!: Signal<string>;
+  readonly role!: Signal<string>;
+  readonly sidebarMenus!: Signal<ISidebarMenu[]>;
+  readonly avatarSrc!: Signal<string>;
+  readonly organizationProfile!: Signal<UserOrgProfileState[]>;
 
   get notificationBadgeText(): string {
     if (!this.totalNotifications || this.totalNotifications <= 0) {
@@ -78,6 +60,12 @@ export class ContenedorComponent implements OnInit {
 
   ) {
     this.nameApp = environment.nameApp;
+    this.displayName = this.userStateService.displayName;
+    this.email = this.userStateService.email;
+    this.role = this.userStateService.role;
+    this.sidebarMenus = this.userStateService.sidebarMenus;
+    this.avatarSrc = this.userStateService.avatarSrc;
+    this.organizationProfile = this.userStateService.organizationProfile;
   }
 
   ngOnInit() {
@@ -100,22 +88,6 @@ export class ContenedorComponent implements OnInit {
       this.totalNotifications = nextTotal;
     });
 
-    this._sesionService.menu$.subscribe(menu => this.menus = menu);
-    this._sesionService.usuario$.subscribe(usuario => {
-      this.usuario = usuario;
-
-      this.userStateService.patch({
-        username: usuario?.username || '',
-        NombreCompleto: usuario?.nombre || '',
-        email: usuario?.correo || ''
-      });
-
-      if (usuario?.base64Img) {
-        this.userStateService.setAvatar(usuario.base64Img);
-      }
-
-      this.userStateService.setStatus('READY');
-    });
     const loaded = this.themeService.loadTheme();
     if (loaded) this.theme = loaded;
   }
@@ -144,19 +116,9 @@ export class ContenedorComponent implements OnInit {
     this.router.navigate([ruta], { relativeTo: this.activatedRoute });
   }
 
-  onFactoringChange(event: Event) {
-    const target = event.target as HTMLSelectElement | null;
-    if (!target?.value) return;
-
-    this.selectedFactoring = target.value;
-    this.goTo(`factoring/${target.value}`);
-  }
-
   onFactoringValueChange(value: string) {
     if (!value) return;
-
-    this.selectedFactoring = value;
-    this.goTo(`factoring/${value}`);
+    this.userStateService.setOrgSelected(value);
   }
 
   toggleNotificationsPanel() {
