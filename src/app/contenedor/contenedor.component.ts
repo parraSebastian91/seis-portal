@@ -1,10 +1,7 @@
 
-import { Component, ElementRef, HostListener, Inject, OnDestroy, OnInit, Signal, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit, Signal } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { AppTheme, LayoutStateService, NotificationCenterService, NotificationSection, ThemeService, UserOrgProfileState, UserStateService } from 'shared-utils';
-import { SesionService } from '../service/sesion.service';
-import { Router, ActivatedRoute } from '@angular/router';
-import { ISidebarMenu } from 'shared-utils/lib/services/types/SidebarMenu.type';
 
 @Component({
   selector: 'app-contenedor',
@@ -20,11 +17,6 @@ export class ContenedorComponent implements OnInit {
 
   selectedFactoring = 'dashboard';
 
-  readonly displayName!: Signal<string>;
-  readonly email!: Signal<string>;
-  readonly role!: Signal<string>;
-  readonly sidebarMenus!: Signal<ISidebarMenu[]>;
-  readonly avatarSrc!: Signal<string>;
   readonly organizationProfile!: Signal<UserOrgProfileState[]>;
 
   get notificationBadgeText(): string {
@@ -34,9 +26,6 @@ export class ContenedorComponent implements OnInit {
 
     return this.totalNotifications > 99 ? '99+' : String(this.totalNotifications);
   }
-
-  @ViewChild('sidebar', { static: true }) sidebar?: ElementRef<HTMLElement>;
-  @ViewChild('toggleBtn', { static: true }) toggleButton?: ElementRef<HTMLElement>;
 
   theme: AppTheme = {
     primary: '#1976d2',
@@ -51,20 +40,12 @@ export class ContenedorComponent implements OnInit {
 
   constructor(
     private themeService: ThemeService,
-    private _sesionService: SesionService,
-    private router: Router,
-    private activatedRoute: ActivatedRoute,
     private userStateService: UserStateService,
     @Inject(LayoutStateService) private layoutStateService: LayoutStateService,
     @Inject(NotificationCenterService) private notificationCenterService: NotificationCenterService
 
   ) {
     this.nameApp = environment.nameApp;
-    this.displayName = this.userStateService.displayName;
-    this.email = this.userStateService.email;
-    this.role = this.userStateService.role;
-    this.sidebarMenus = this.userStateService.sidebarMenus;
-    this.avatarSrc = this.userStateService.avatarSrc;
     this.organizationProfile = this.userStateService.organizationProfile;
   }
 
@@ -102,20 +83,6 @@ export class ContenedorComponent implements OnInit {
     if (loaded) this.theme = loaded;
   }
 
-  navigate(ruta: string) {
-    this.router.navigate([ruta], { relativeTo: this.activatedRoute });
-  }
-
-  /**
-   * Navega a una ruta relativa dentro del Portal
-   * Ejemplos:
-   *   goTo('pages/view-profile') -> /portal/contenedor/pages/view-profile
-   *   goTo('pages/edit-profile') -> /portal/contenedor/pages/edit-profile
-   */
-  goTo(ruta: string) {
-    this.router.navigate([ruta], { relativeTo: this.activatedRoute });
-  }
-
   onFactoringValueChange(value: string) {
     if (!value) return;
     this.userStateService.setOrgSelected(value);
@@ -132,74 +99,4 @@ export class ContenedorComponent implements OnInit {
     });
   }
 
-  private setNotificationsPanelState(open: boolean) {
-    this.layoutStateService.setNotificationsPanelState(open);
-  }
-
-  //========================== SIDEBAR METHODS ========================//
-
-  toggleSidebar() {
-    const sidebar = this.sidebar?.nativeElement;
-    const toggleButton = this.toggleButton?.nativeElement;
-    if (!sidebar || !toggleButton) return;
-
-    sidebar.classList.toggle('close');
-    toggleButton.classList.toggle('rotate');
-
-    this.closeAllSubMenus();
-  }
-
-  toggleSubMenu(event: Event) {
-    const button = event.currentTarget as HTMLElement | null;
-    const sidebar = this.sidebar?.nativeElement;
-    if (!button || !sidebar) return;
-
-    const nextElement = button.nextElementSibling as HTMLElement | null;
-    if (!nextElement) return;
-
-    if (!nextElement.classList.contains('show')) {
-      this.closeAllSubMenus();
-    }
-
-    nextElement.classList.toggle('show');
-    button.classList.toggle('rotate');
-
-    if (sidebar.classList.contains('close')) {
-      sidebar.classList.toggle('close');
-      this.toggleButton?.nativeElement.classList.toggle('rotate');
-    }
-  }
-
-  closeAllSubMenus() {
-    const sidebar = this.sidebar?.nativeElement;
-
-
-    if (!sidebar) return;
-
-    Array.from(sidebar.getElementsByClassName('show')).forEach((ul) => {
-      ul.classList.remove('show');
-      const previous = ul.previousElementSibling as HTMLElement | null;
-      previous?.classList.remove('rotate');
-    });
-  }
-
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: MouseEvent) {
-    const sidebar = this.sidebar?.nativeElement;
-    const target = event.target as Node | null;
-    if (!sidebar || !target) return;
-
-    if (!sidebar.contains(target)) {
-      this.closeAllSubMenus();
-    }
-  }
-
-  async logout(): Promise<void> {
-    try {
-      await this._sesionService.logout();
-      window.location.href = environment.appLogin;
-    } catch (error) {
-      console.error('Error during logout:', error);
-    }
-  }
 }
