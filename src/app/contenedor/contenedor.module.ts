@@ -17,6 +17,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MenuComponent } from './componentes/menu/menu.component';
 import { NavbarComponent } from './componentes/navbar/navbar.component';
 import { TopNavbarComponent } from './componentes/top-navbar/top-navbar.component';
+import { ModalUploadObjectComponent } from './componentes/modal-upload-object/modal-upload-object.component';
 import { RouterModule } from '@angular/router';
 import {MatBadgeModule} from '@angular/material/badge';
 @NgModule({
@@ -25,7 +26,8 @@ import {MatBadgeModule} from '@angular/material/badge';
     MenuComponent,
     NavbarComponent,
     TopNavbarComponent,
-    PerfilComponent
+    PerfilComponent,
+    ModalUploadObjectComponent
   ],
   imports: [
     CommonModule,
