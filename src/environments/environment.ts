@@ -6,5 +6,6 @@ export const environment = {
     msSession: 'http://localhost:3002',
     appLogin: '/pages/login',
     apiProtocol: 'http',
-    apiPort: '8000'
+    apiPort: '8000',
+    enableDevLogs: false
 };

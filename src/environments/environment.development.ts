@@ -5,4 +5,5 @@ export const environment = {
     msErp: 'http://localhost:3001',
     msSession: 'http://localhost:3002',
     appLogin: 'http://localhost:8000/pages/login',
+    enableDevLogs: true
 };

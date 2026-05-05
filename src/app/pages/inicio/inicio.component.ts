@@ -60,14 +60,15 @@ export class InicioComponent implements OnInit, OnDestroy {
           }))
         });
       }
-
       if (userImageResult.status === 'fulfilled' && userImageResult.value) {
-        const userImageSet: UserImageSet = {
-          small: userImageResult.value.avatar.sm.path,
-          medium: userImageResult.value.avatar.md.path,
-          large: userImageResult.value.avatar.lg.path
-        };
-        this.userStateService.setAvatar(userImageSet);
+        if (userImageResult.value.avatar?.sm) {
+          const userImageSet: UserImageSet = {
+            small: userImageResult.value.avatar.sm.path,
+            medium: userImageResult.value.avatar.md.path,
+            large: userImageResult.value.avatar.lg.path
+          };
+          this.userStateService.setAvatar(userImageSet);
+        }
       }
 
       if (userProfile.status === 'fulfilled' && userProfile.value) {
