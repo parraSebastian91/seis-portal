@@ -18,6 +18,7 @@ export class ContenedorComponent implements OnInit {
   selectedFactoring = 'dashboard';
 
   readonly organizationProfile!: Signal<UserOrgProfileState[]>;
+  readonly orgSelected!: Signal<string>;
 
   get notificationBadgeText(): string {
     if (!this.totalNotifications || this.totalNotifications <= 0) {
@@ -47,6 +48,7 @@ export class ContenedorComponent implements OnInit {
   ) {
     this.nameApp = environment.nameApp;
     this.organizationProfile = this.userStateService.organizationProfile;
+    this.orgSelected = this.userStateService.orgSelected;
   }
 
   ngOnInit() {
@@ -85,7 +87,9 @@ export class ContenedorComponent implements OnInit {
 
   onFactoringValueChange(value: string) {
     if (!value) return;
+    console.log('[CONTENEDOR] Evento factoringChange capturado:', value);
     this.userStateService.setOrgSelected(value);
+    console.log('[CONTENEDOR] orgSelected actualizado en estado:', this.orgSelected());
   }
 
   toggleNotificationsPanel() {
