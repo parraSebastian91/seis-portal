@@ -1,8 +1,9 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { SesionService } from '../../service/sesion.service';
 import { Router } from '@angular/router';
-import { UserImageSet, UserOrgProfileState, UserProfileService, UserStateService } from 'shared-utils';
+import { UserImageSet, UserOrgProfileState, UserProfileService, UserStateService, NotificationSocketService } from 'shared-utils';
 import { Sistema } from '../../service/interfaces/SystemNavigator.dto';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-inicio',
@@ -25,10 +26,22 @@ export class InicioComponent implements OnInit, OnDestroy {
   private swapDelay = 300; // ms fade out delay
   private period = 1000; // ms between swaps
 
+  private resolveSocketUrl(): string {
+    const bff = environment.BFF ?? '';
+
+    if (/^https?:\/\//i.test(bff)) {
+      const host = bff.replace(/\/security\/bff\/?$/i, '').replace(/\/$/, '');
+      return `${host}/notifications`;
+    }
+
+    return '/notifications';
+  }
+
   constructor(
     private sesionService: SesionService,
     private userProfileService: UserProfileService,
     private userStateService: UserStateService,
+    @Inject(NotificationSocketService) private notificationSocketService: NotificationSocketService,
     private router: Router
   ) { }
 
@@ -79,6 +92,10 @@ export class InicioComponent implements OnInit, OnDestroy {
           userProfile.value.nombreCompleto,
           userProfile.value.datosContacto.correo,
           ''
+        );
+        this.notificationSocketService.connect(
+          userProfile.value.username,
+          this.resolveSocketUrl()
         );
       }
 

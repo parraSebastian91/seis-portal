@@ -50,12 +50,12 @@ export class ContenedorComponent implements OnInit {
     this.organizationProfile = this.userStateService.organizationProfile;
     this.orgSelected = this.userStateService.orgSelected;
   }
-
+  
   ngOnInit() {
     this.layoutStateService.notificationsPanelOpen$.subscribe((open: boolean) => {
       this.notificationsPanelOpen = open;
     });
-
+    
     this.notificationCenterService.ensureInitializedWithMockData();
     this.notificationCenterService.sections$.subscribe((sections: NotificationSection[]) => {
       const nextTotal = sections.reduce(
@@ -63,14 +63,15 @@ export class ContenedorComponent implements OnInit {
           sum + section.notifications.filter((notification) => !notification.read).length,
         0
       );
-
+      
       if (nextTotal > 0 && nextTotal !== this.totalNotifications) {
         this.triggerBadgePulse();
       }
-
+      
       this.totalNotifications = nextTotal;
     });
-
+    
+    this.onFactoringValueChange(this.userStateService.organizationProfile()?.[0]?.uuid || '');
     const loaded = this.themeService.loadTheme();
     if (loaded) this.theme = loaded;
   }
