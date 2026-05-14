@@ -1,8 +1,8 @@
-import { Component, ElementRef, Inject, OnInit, OnDestroy, ViewChild } from '@angular/core';
-import { Observable } from 'rxjs';
+import { AfterViewInit, Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Observable, Subscription } from 'rxjs';
 import { SesionService } from '../../../service/sesion.service';
 import { environment } from '../../../../environments/environment';
-import { LayoutStateService, NotificationCenterService, NotificationSection } from 'shared-utils';
+import { LayoutStateService, NotificationCenterService, NotificationSection, ViewportService } from 'shared-utils';
 
 @Component({
   selector: 'app-navbar',
@@ -11,14 +11,13 @@ import { LayoutStateService, NotificationCenterService, NotificationSection } fr
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss'
 })
-export class NavbarComponent implements OnInit, OnDestroy {
+export class NavbarComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('openSidebarButton', { static: false }) openSidebarButton?: ElementRef<HTMLButtonElement>;
   @ViewChild('closeSidebarButton', { static: false }) closeSidebarButton?: ElementRef<HTMLButtonElement>;
   @ViewChild('navbar', { static: false }) navbar?: ElementRef<HTMLElement>;
   @ViewChild('overlay', { static: false }) overlay?: ElementRef<HTMLElement>;
 
-  private mediaQuery: MediaQueryList | null = null;
-  private mediaQueryListener: ((e: MediaQueryListEvent) => void) | null = null;
+  private readonly subscriptions = new Subscription();
 
   // Notificaciones
   notificationSections$!: Observable<NotificationSection[]>;
@@ -27,13 +26,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   selectedFilter: string | null = null;
   filteredSections: NotificationSection[] = [];
   
-  mediaQuery$ = new Observable<boolean>(observer => {
-    const mq = window.matchMedia('(width < 700px)');
-    observer.next(mq.matches);
-    const listener = (e: MediaQueryListEvent) => observer.next(e.matches);
-    mq.addEventListener('change', listener);
-    return () => mq.removeEventListener('change', listener);
-  });
+  mediaQuery$!: Observable<boolean>;
 
   get totalNotifications(): number {
     return this.notificationCenterService.totalUnread;
@@ -42,33 +35,40 @@ export class NavbarComponent implements OnInit, OnDestroy {
   constructor(
     private sesionService: SesionService,
     @Inject(LayoutStateService) private layoutStateService: LayoutStateService,
-    @Inject(NotificationCenterService) private notificationCenterService: NotificationCenterService
+    @Inject(NotificationCenterService) private notificationCenterService: NotificationCenterService,
+    @Inject(ViewportService) private viewportService: ViewportService
   ) { }
 
   ngOnInit() {
-    this.layoutStateService.notificationsPanelOpen$.subscribe((open: boolean) => {
-      this.notificationsPanelOpen = open;
-    });
+    this.mediaQuery$ = this.viewportService.isMobile$;
 
-    // Initialize media query
-    this.mediaQuery = window.matchMedia('(width < 700px)');
-    this.mediaQueryListener = (e) => this.updateNavbar(e);
+    this.subscriptions.add(
+      this.layoutStateService.notificationsPanelOpen$.subscribe((open: boolean) => {
+        this.notificationsPanelOpen = open;
+      })
+    );
 
-    // Add listener for media changes
-    this.mediaQuery.addEventListener('change', this.mediaQueryListener);
-
-    // Initial call
-    this.updateNavbar(this.mediaQuery);
+    this.subscriptions.add(
+      this.mediaQuery$.subscribe((isMobile: boolean) => {
+        this.updateNavbar(isMobile);
+      })
+    );
 
     // Inicializar notificaciones
     this.notificationCenterService.ensureInitializedWithMockData();
     this.notificationSections$ = this.notificationCenterService.sections$;
 
     // Suscribirse a cambios
-    this.notificationSections$.subscribe((sections: NotificationSection[]) => {
-      this.notificationSections = sections;
-      this.applyFilter();
-    });
+    this.subscriptions.add(
+      this.notificationSections$.subscribe((sections: NotificationSection[]) => {
+        this.notificationSections = sections;
+        this.applyFilter();
+      })
+    );
+  }
+
+  ngAfterViewInit() {
+    this.updateNavbar(this.viewportService.isMobile);
   }
 
   applyFilter() {
@@ -87,10 +87,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
   
   ngOnDestroy() {
-    // Clean up listener
-    if (this.mediaQuery && this.mediaQueryListener) {
-      this.mediaQuery.removeEventListener('change', this.mediaQueryListener);
-    }
+    this.subscriptions.unsubscribe();
 
     this.setNotificationsPanelState(false);
   }
@@ -107,16 +104,16 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.notificationCenterService.clearAll();
   }
 
-  updateNavbar(media: MediaQueryList | MediaQueryListEvent) {
+  updateNavbar(isMobile: boolean) {
+    if (isMobile) {
+      this.setNotificationsPanelState(false);
+    }
+
     const navbar = this.navbar?.nativeElement;
     if (!navbar) return;
 
-    const isMobile = media.matches;
-    console.log('Mobile view:', isMobile);
-
     if (isMobile) {
       navbar.setAttribute('inert', '');
-      this.setNotificationsPanelState(false);
     } else {
       navbar.removeAttribute('inert');
     }
