@@ -1,7 +1,8 @@
 
-import { Component, Inject, OnInit, Signal } from '@angular/core';
+import { Component, HostListener, Inject, OnInit, signal, Signal } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { AppTheme, LayoutStateService, NotificationCenterService, NotificationSection, ThemeService, UserOrgProfileState, UserStateService } from 'shared-utils';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-contenedor',
@@ -37,25 +38,26 @@ export class ContenedorComponent implements OnInit {
     onPrimary: '#ffffff',
     onFocus: ''
   };
-
+  readonly isMobileView = signal(false);
 
   constructor(
     private themeService: ThemeService,
     private userStateService: UserStateService,
     @Inject(LayoutStateService) private layoutStateService: LayoutStateService,
-    @Inject(NotificationCenterService) private notificationCenterService: NotificationCenterService
-
+    @Inject(NotificationCenterService) private notificationCenterService: NotificationCenterService,
+    private router: Router
   ) {
+    this.updateViewportMode();
     this.nameApp = environment.nameApp;
     this.organizationProfile = this.userStateService.organizationProfile;
     this.orgSelected = this.userStateService.orgSelected;
   }
-  
+
   ngOnInit() {
     this.layoutStateService.notificationsPanelOpen$.subscribe((open: boolean) => {
       this.notificationsPanelOpen = open;
     });
-    
+
     this.notificationCenterService.ensureInitializedWithMockData();
     this.notificationCenterService.sections$.subscribe((sections: NotificationSection[]) => {
       const nextTotal = sections.reduce(
@@ -63,14 +65,13 @@ export class ContenedorComponent implements OnInit {
           sum + section.notifications.filter((notification) => !notification.read).length,
         0
       );
-      
+
       if (nextTotal > 0 && nextTotal !== this.totalNotifications) {
         this.triggerBadgePulse();
       }
-      
       this.totalNotifications = nextTotal;
     });
-    
+
     this.onFactoringValueChange(this.userStateService.organizationProfile()?.[0]?.uuid || '');
     const loaded = this.themeService.loadTheme();
     if (loaded) this.theme = loaded;
@@ -88,7 +89,6 @@ export class ContenedorComponent implements OnInit {
 
   onFactoringValueChange(value: string) {
     if (!value) return;
-    console.log('[CONTENEDOR] Evento factoringChange capturado:', value);
     this.userStateService.setOrgSelected(value);
     console.log('[CONTENEDOR] orgSelected actualizado en estado:', this.orgSelected());
   }
@@ -97,11 +97,37 @@ export class ContenedorComponent implements OnInit {
     this.layoutStateService.toggleNotificationsPanelState();
   }
 
+  onRouterContentInteraction(): void {
+    if (this.isMobileView()) {
+      return;
+    }
+    this.layoutStateService.setSidebarClosedState(true);
+  }
+
+  onAccountClick(): void {
+    this.router.navigate(['contenedor/pages/view-profile']);
+  }
+
+  @HostListener('window:resize')
+  onWindowResize(): void {
+    this.updateViewportMode();
+  }
+
   private triggerBadgePulse() {
     this.badgePulse = false;
     requestAnimationFrame(() => {
       this.badgePulse = true;
     });
+  }
+
+
+  private updateViewportMode(): void {
+    if (typeof window === 'undefined') {
+      this.isMobileView.set(false);
+      return;
+    }
+    console.log('Window resized, updating mobile view state. Current width:', window.innerWidth);
+    this.isMobileView.set(window.innerWidth <= 980);
   }
 
 }

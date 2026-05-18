@@ -11,6 +11,9 @@
     </div>
 
     <div class="top-navbar-actions">
+        <button class="btn-mini-fab" (click)="onAccountClick()" aria-label="notificaciones">
+            <mat-icon aria-hidden="false">account_circle</mat-icon>
+        </button>
         <button class="btn-mini-fab" [class.badge-pulse]="badgePulse" (click)="onNotificationsClick()"
             [attr.aria-expanded]="notificationsPanelOpen" aria-label="notificaciones">
             <mat-icon aria-hidden="false" [matBadge]="notificationBadgeText" matBadgeColor="warn"

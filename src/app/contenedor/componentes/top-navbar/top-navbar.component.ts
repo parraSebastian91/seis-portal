@@ -18,6 +18,7 @@ export class TopNavbarComponent {
 
   @Output() factoringChange = new EventEmitter<string>();
   @Output() notificationsClick = new EventEmitter<void>();
+  @Output() accountClick = new EventEmitter<void>();
 
   onFactoringChange(event: Event): void {
     const target = event.target as HTMLSelectElement | null;
@@ -28,5 +29,9 @@ export class TopNavbarComponent {
 
   onNotificationsClick(): void {
     this.notificationsClick.emit();
+  }
+
+  onAccountClick(): void {
+    this.accountClick.emit();
   }
 }
