@@ -20,6 +20,12 @@ const routes: Routes = [
         .then(m => m.PublicadorFacturasRoutingModule)
   },
   {
+    path: 'pages/factoring/ofertador-facturas',
+    loadChildren: () =>
+      loadRemoteModule('seis-mfe-ofertador-facturas', './OfertadorFacturasRoutingModule')
+        .then(m => m.OfertadorFacturasRoutingModule)
+  },
+  {
     path: 'pages',
     loadChildren: () =>
       loadRemoteModule('seis-mfe-gestion-usuario', './UserProfileRoutingModule')
