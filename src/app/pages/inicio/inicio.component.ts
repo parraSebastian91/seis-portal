@@ -87,7 +87,7 @@ export class InicioComponent implements OnInit, OnDestroy {
       if (userProfile.status === 'fulfilled' && userProfile.value) {
         console.log('User Profile:', userProfile.value);
         this.userStateService.setBasicInfo(
-          '',
+          userProfile.value.usuarioUUID,
           userProfile.value.username,
           userProfile.value.nombreCompleto,
           userProfile.value.datosContacto.correo,
