@@ -64,6 +64,8 @@ export class ContenedorComponent implements OnInit {
       this.totalNotifications = nextTotal;
     });
 
+    // HU-37 CA-06: inicializa data-theme="dark" (MVP fijo) y carga tema persistido
+    this.themeService.initTheme();
     const loaded = this.themeService.loadTheme();
     if (loaded) this.theme = loaded;
   }

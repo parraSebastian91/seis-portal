@@ -1,4 +1,15 @@
 /* You can add global styles to this file, and also import other style files */
+
+// =============================================================================
+// HU-37 — Design System Tokens (CA-01 a CA-09)
+// Import token layers from shared-utils source.
+// =============================================================================
+@import '../../shared-utils/src/lib/styles/tokens';
+
+// =============================================================================
+// Legacy tokens — mantienen compatibilidad con componentes existentes
+// que aún usan --primary, --font-color, --background-menu, etc.
+// =============================================================================
 :root {
   --primary: #1976d2;
   --secondary: #114d8a;
