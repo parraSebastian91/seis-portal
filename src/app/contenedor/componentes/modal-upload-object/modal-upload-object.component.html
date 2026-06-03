@@ -1,0 +1,51 @@
+<div class="modal-backdrop" *ngIf="isOpen" (click)="close()">
+  <section class="upload-modal" (click)="$event.stopPropagation()">
+
+    <header class="modal-header">
+      <h2>{{ config.title }}</h2>
+      <button type="button" class="btn-close" (click)="close()" aria-label="Cerrar">
+        <mat-icon>close</mat-icon>
+      </button>
+    </header>
+
+    <p class="modal-hint">{{ config.hint }}</p>
+
+    <label
+      class="dropzone"
+      [class.dragging]="isDragging"
+      (dragover)="onDragOver($event)"
+      (dragleave)="onDragLeave($event)"
+      (drop)="onDrop($event)"
+    >
+      <input type="file" [attr.accept]="config.accept" (change)="onFileSelected($event)" />
+      <mat-icon class="dropzone-icon">upload_file</mat-icon>
+      <span>Arrastra tu archivo aquí o toca para seleccionarlo</span>
+    </label>
+
+    <div class="mobile-actions" *ngIf="isMobile">
+      <label class="btn-mobile">
+        <mat-icon>photo_camera</mat-icon>
+        Tomar foto
+        <input type="file" accept="image/*" capture="environment" (change)="onFileSelected($event)" />
+      </label>
+      <label class="btn-mobile">
+        <mat-icon>folder_open</mat-icon>
+        Elegir archivo
+        <input type="file" [attr.accept]="config.accept" (change)="onFileSelected($event)" />
+      </label>
+    </div>
+
+    <p class="selected-file" [class.has-file]="!!selectedFile">
+      <mat-icon>{{ selectedFile ? 'check_circle' : 'info' }}</mat-icon>
+      {{ selectedFileName }}
+    </p>
+
+    <footer class="modal-footer">
+      <button type="button" class="btn-light" (click)="close()">Cancelar</button>
+      <button type="button" class="btn-primary" [disabled]="!selectedFile" (click)="submit()">
+        Publicar
+      </button>
+    </footer>
+
+  </section>
+</div>

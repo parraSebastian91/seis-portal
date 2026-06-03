@@ -1,0 +1,19 @@
+<div class="body">
+
+  <app-menu></app-menu>
+
+  <app-navbar></app-navbar>
+
+  <app-modal-upload-object></app-modal-upload-object>
+
+  <main>
+    <app-top-navbar [factoringOptions]="organizationProfile()" [selectedFactoring]="selectedFactoring"
+      [notificationsPanelOpen]="notificationsPanelOpen" [notificationBadgeText]="notificationBadgeText"
+      [badgePulse]="badgePulse" (factoringChange)="onFactoringValueChange($event)"
+      (notificationsClick)="toggleNotificationsPanel()" (accountClick)="onAccountClick()"></app-top-navbar>
+    <section class="router-content" (click)="onRouterContentInteraction()" (touchstart)="onRouterContentInteraction()"
+      (focusin)="onRouterContentInteraction()">
+      <router-outlet></router-outlet>
+    </section>
+  </main>
+</div>
