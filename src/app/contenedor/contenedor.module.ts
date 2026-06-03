@@ -22,6 +22,7 @@ import { RouterModule } from '@angular/router';
 import { MatBadgeModule } from '@angular/material/badge';
 import { SearchableCardSelectComponent } from 'shared-utils';
 import { OrganizationSelectorComponent } from './componentes/top-navbar/organization-selector/organization-selector.component';
+import { NotificationsSidebarComponent } from './componentes/notifications-sidebar/notifications-sidebar.component';
 
 @NgModule({
   declarations: [
@@ -46,6 +47,7 @@ import { OrganizationSelectorComponent } from './componentes/top-navbar/organiza
     PagesModule,
     SearchableCardSelectComponent,
     OrganizationSelectorComponent,
+    NotificationsSidebarComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

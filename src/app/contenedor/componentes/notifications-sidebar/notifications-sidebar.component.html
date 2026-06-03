@@ -1,0 +1,122 @@
+@if (isOpen) {
+  <div class="ns-overlay" (click)="close()" aria-hidden="true"></div>
+  <aside class="ns-panel" role="complementary" aria-label="Notificaciones">
+
+    <!-- Header -->
+    <div class="ns-header">
+      <h2 class="ns-title">Notificaciones</h2>
+      <button class="ns-close" (click)="close()" aria-label="Cerrar panel de notificaciones">
+        <span class="material-icons" aria-hidden="true">close</span>
+      </button>
+    </div>
+
+    <!-- Filter chips -->
+    <div class="ns-filter-bar" role="toolbar" aria-label="Filtrar notificaciones">
+      @for (f of categoryFilters; track f.key) {
+        <button
+          class="ns-chip"
+          [class.ns-chip--active]="activeFilter === f.key"
+          (click)="setFilter(f.key)"
+          [attr.aria-pressed]="activeFilter === f.key">
+          <span class="material-icons ns-chip-icon" aria-hidden="true">{{ f.icon }}</span>
+          {{ f.label }}
+        </button>
+      }
+    </div>
+
+    <!-- Feed -->
+    <div class="ns-feed" #feedEl>
+      @if (!hasItems) {
+        <!-- Global empty state -->
+        <div class="ns-empty-global" aria-live="polite">
+          <span class="material-icons ns-empty-icon" aria-hidden="true">notifications_off</span>
+          <p>No tienes notificaciones todavía.</p>
+        </div>
+      } @else if (isEmpty) {
+        <!-- Category empty state -->
+        <div class="ns-empty-cat" aria-live="polite">
+          <span class="material-icons ns-empty-icon" aria-hidden="true">inbox</span>
+          <p>Sin notificaciones</p>
+        </div>
+      } @else {
+        @for (group of groups; track trackByGroup($index, group)) {
+          <!-- Time separator -->
+          <div class="ns-time-separator" role="separator">{{ group.groupLabel }}</div>
+
+          @for (cat of group.categories; track trackByCat($index, cat)) {
+            <!-- Category header (only in "Todas" view) -->
+            @if (showCategoryHeader()) {
+              <div class="ns-cat-header">
+                <span class="material-icons ns-cat-icon" aria-hidden="true">{{ cat.icon }}</span>
+                <span class="ns-cat-label">{{ cat.label }}</span>
+                @if (cat.unreadCount > 0) {
+                  <span class="ns-cat-unread" aria-label="{{ cat.unreadCount }} no leídas">
+                    <span class="material-icons ns-cat-unread-icon" aria-hidden="true">format_list_bulleted</span>
+                    {{ cat.unreadCount }}
+                  </span>
+                }
+              </div>
+            }
+
+            <!-- Notification cards -->
+            @for (item of cat.items; track trackById($index, item)) {
+              <div
+                class="ns-card"
+                [class.ns-card--unread]="!item.read"
+                role="article"
+                tabindex="0"
+                [attr.aria-label]="item.title + ': ' + item.body"
+                (click)="onCardClick(item)"
+                (keydown.enter)="onCardClick(item)"
+                (keydown.space)="$event.preventDefault(); onCardClick(item)"
+                [attr.data-nid]="item.id">
+                @if (!item.read) {
+                  <span class="ns-dot" aria-hidden="true"></span>
+                }
+                <div class="ns-card-body">
+                  <p class="ns-card-title">{{ item.title }}</p>
+                  <p class="ns-card-text">{{ item.body }}</p>
+                  <time class="ns-card-time" [dateTime]="item.createdAt.toISOString()">
+                    {{ item.createdAt | date:'d MMM · HH:mm' }}
+                  </time>
+                </div>
+                @if (!item.read) {
+                  <button
+                    class="ns-card-mark"
+                    (click)="$event.stopPropagation(); onMarkRead(item)"
+                    aria-label="Marcar como leída">
+                    <span class="material-icons" aria-hidden="true">done</span>
+                  </button>
+                }
+              </div>
+            }
+          }
+        }
+      }
+    </div>
+
+    <!-- Footer -->
+    <div class="ns-footer">
+      @if (!showClearConfirm) {
+        <button
+          class="ns-clear-btn"
+          [disabled]="!hasReadItems"
+          (click)="onClearAllClick()"
+          [attr.aria-disabled]="!hasReadItems"
+          [attr.title]="hasReadItems ? null : 'No hay notificaciones leídas para eliminar.'">
+          <span class="material-icons" aria-hidden="true">delete_sweep</span>
+          Limpiar todas
+        </button>
+      } @else {
+        <div class="ns-clear-confirm" role="group" aria-label="Confirmar eliminación">
+          <span class="ns-clear-question">¿Eliminar todas las leídas?</span>
+          <div class="ns-clear-actions">
+            <button class="ns-clear-cancel" (click)="onClearCancel()">Cancelar</button>
+            <button class="ns-clear-ok" (click)="onClearConfirm()">Confirmar</button>
+          </div>
+        </div>
+      }
+    </div>
+
+  </aside>
+}
