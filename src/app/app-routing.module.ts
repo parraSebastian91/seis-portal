@@ -11,6 +11,7 @@ const routes: Routes = [
   { path: 'usuario/perfil',               redirectTo: 'contenedor/pages/perfil',                  pathMatch: 'full' },
   { path: 'usuario/organizaciones',         redirectTo: 'contenedor/pages/organizaciones',           pathMatch: 'full' },
   { path: 'usuario/organizaciones/nueva',   redirectTo: 'contenedor/pages/organizaciones/nueva',    pathMatch: 'full' },
+  { path: 'usuario/organizaciones/:id',     redirectTo: 'contenedor/pages/organizaciones/:id',      pathMatch: 'full' },
 
   // ── Autenticación: callback PKCE + redirect a login ────────────────────────
   {
