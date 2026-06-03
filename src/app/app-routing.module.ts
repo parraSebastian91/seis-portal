@@ -8,6 +8,7 @@ const routes: Routes = [
   { path: 'publicador', redirectTo: 'contenedor/pages/factoring/publicador-facturas', pathMatch: 'full' },
   { path: 'ofertador',  redirectTo: 'contenedor/pages/factoring/ofertador-facturas',  pathMatch: 'full' },
   { path: 'dashboard',  redirectTo: 'contenedor/pages/factoring/dashboard-facturas',  pathMatch: 'full' },
+  { path: 'usuario/perfil', redirectTo: 'contenedor/pages/perfil', pathMatch: 'full' },
 
   // ── Autenticación: callback PKCE + redirect a login ────────────────────────
   {
