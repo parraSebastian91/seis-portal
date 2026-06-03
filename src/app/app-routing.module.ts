@@ -8,10 +8,11 @@ const routes: Routes = [
   { path: 'publicador', redirectTo: 'contenedor/pages/factoring/publicador-facturas', pathMatch: 'full' },
   { path: 'ofertador',  redirectTo: 'contenedor/pages/factoring/ofertador-facturas',  pathMatch: 'full' },
   { path: 'dashboard',  redirectTo: 'contenedor/pages/factoring/dashboard-facturas',  pathMatch: 'full' },
-  { path: 'usuario/perfil',               redirectTo: 'contenedor/pages/perfil',                  pathMatch: 'full' },
-  { path: 'usuario/organizaciones',         redirectTo: 'contenedor/pages/organizaciones',           pathMatch: 'full' },
-  { path: 'usuario/organizaciones/nueva',   redirectTo: 'contenedor/pages/organizaciones/nueva',    pathMatch: 'full' },
-  { path: 'usuario/organizaciones/:id',     redirectTo: 'contenedor/pages/organizaciones/:id',      pathMatch: 'full' },
+  { path: 'usuario/perfil',                     redirectTo: 'contenedor/pages/perfil',                         pathMatch: 'full' },
+  { path: 'usuario/organizaciones',              redirectTo: 'contenedor/pages/organizaciones',                  pathMatch: 'full' },
+  { path: 'usuario/organizaciones/nueva',        redirectTo: 'contenedor/pages/organizaciones/nueva',           pathMatch: 'full' },
+  { path: 'usuario/organizaciones/:id',          redirectTo: 'contenedor/pages/organizaciones/:id',             pathMatch: 'full' },
+  { path: 'usuario/organizaciones/:id/gestor',   redirectTo: 'contenedor/pages/organizaciones/:id/gestor',      pathMatch: 'full' },
 
   // ── Autenticación: callback PKCE + redirect a login ────────────────────────
   {
