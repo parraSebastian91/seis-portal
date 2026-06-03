@@ -7,9 +7,9 @@
   <app-modal-upload-object></app-modal-upload-object>
 
   <main>
-    <app-top-navbar [factoringOptions]="organizationProfile()" [selectedFactoring]="selectedFactoring"
+    <app-top-navbar
       [notificationsPanelOpen]="notificationsPanelOpen" [notificationBadgeText]="notificationBadgeText"
-      [badgePulse]="badgePulse" (factoringChange)="onFactoringValueChange($event)"
+      [badgePulse]="badgePulse"
       (notificationsClick)="toggleNotificationsPanel()" (accountClick)="onAccountClick()"></app-top-navbar>
     <section class="router-content" (click)="onRouterContentInteraction()" (touchstart)="onRouterContentInteraction()"
       (focusin)="onRouterContentInteraction()">

@@ -1,7 +1,7 @@
 
-import { Component, HostListener, Inject, OnInit, signal, Signal } from '@angular/core';
+import { Component, HostListener, Inject, OnInit, signal } from '@angular/core';
 import { environment } from '../../environments/environment';
-import { AppTheme, LayoutStateService, NotificationCenterService, NotificationSection, ThemeService, UserOrgProfileState, UserStateService } from 'shared-utils';
+import { AppTheme, LayoutStateService, NotificationCenterService, NotificationSection, ThemeService } from 'shared-utils';
 import { Router } from '@angular/router';
 
 @Component({
@@ -15,11 +15,6 @@ export class ContenedorComponent implements OnInit {
   notificationsPanelOpen = false;
   totalNotifications = 0;
   badgePulse = false;
-
-  selectedFactoring = 'dashboard';
-
-  readonly organizationProfile!: Signal<UserOrgProfileState[]>;
-  readonly orgSelected!: Signal<string>;
 
   get notificationBadgeText(): string {
     if (!this.totalNotifications || this.totalNotifications <= 0) {
@@ -42,15 +37,12 @@ export class ContenedorComponent implements OnInit {
 
   constructor(
     private themeService: ThemeService,
-    private userStateService: UserStateService,
     @Inject(LayoutStateService) private layoutStateService: LayoutStateService,
     @Inject(NotificationCenterService) private notificationCenterService: NotificationCenterService,
     private router: Router
   ) {
     this.updateViewportMode();
     this.nameApp = environment.nameApp;
-    this.organizationProfile = this.userStateService.organizationProfile;
-    this.orgSelected = this.userStateService.orgSelected;
   }
 
   ngOnInit() {
@@ -72,7 +64,6 @@ export class ContenedorComponent implements OnInit {
       this.totalNotifications = nextTotal;
     });
 
-    this.onFactoringValueChange(this.userStateService.organizationProfile()?.[0]?.uuid || '');
     const loaded = this.themeService.loadTheme();
     if (loaded) this.theme = loaded;
   }
@@ -85,12 +76,6 @@ export class ContenedorComponent implements OnInit {
     this.themeService.reset();
     const loaded = this.themeService.loadTheme();
     if (loaded) this.theme = loaded;
-  }
-
-  onFactoringValueChange(value: string) {
-    if (!value) return;
-    this.userStateService.setOrgSelected(value);
-    console.log('[CONTENEDOR] orgSelected actualizado en estado:', this.orgSelected());
   }
 
   toggleNotificationsPanel() {
@@ -119,7 +104,6 @@ export class ContenedorComponent implements OnInit {
       this.badgePulse = true;
     });
   }
-
 
   private updateViewportMode(): void {
     if (typeof globalThis.innerWidth === 'undefined') {

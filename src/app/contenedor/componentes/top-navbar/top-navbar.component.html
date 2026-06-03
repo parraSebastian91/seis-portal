@@ -1,13 +1,6 @@
 <div class="top-navbar">
     <div class="top-navbar-left">
-        <label class="top-navbar-label" for="factoring-select">
-            <mat-icon aria-hidden="false">domain</mat-icon></label>
-        <select id="factoring-select" class="top-navbar-select" [value]="selectedFactoring"
-            (change)="onFactoringChange($event)">
-            @for (option of factoringOptions; track option.uuid) {
-            <option [value]="option.uuid">{{ option.razonSocial }}</option>
-            }
-        </select>
+        <app-organization-selector></app-organization-selector>
     </div>
 
     <div class="top-navbar-actions">

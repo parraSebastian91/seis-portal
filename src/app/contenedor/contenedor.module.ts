@@ -19,7 +19,10 @@ import { NavbarComponent } from './componentes/navbar/navbar.component';
 import { TopNavbarComponent } from './componentes/top-navbar/top-navbar.component';
 import { ModalUploadObjectComponent } from './componentes/modal-upload-object/modal-upload-object.component';
 import { RouterModule } from '@angular/router';
-import {MatBadgeModule} from '@angular/material/badge';
+import { MatBadgeModule } from '@angular/material/badge';
+import { SearchableCardSelectComponent } from 'shared-utils';
+import { OrganizationSelectorComponent } from './componentes/top-navbar/organization-selector/organization-selector.component';
+
 @NgModule({
   declarations: [
     ContenedorComponent,
@@ -40,7 +43,9 @@ import {MatBadgeModule} from '@angular/material/badge';
     MatSidenavModule,
     MatBadgeModule,
     ContenedoRoutingModule,
-    PagesModule
+    PagesModule,
+    SearchableCardSelectComponent,
+    OrganizationSelectorComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
