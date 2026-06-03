@@ -2,7 +2,7 @@ import { Component, ElementRef, HostListener, Inject, OnDestroy, OnInit, Signal,
 import { SesionService } from '../../../service/sesion.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LayoutStateService, UserStateService } from 'shared-utils';
-import { ISidebarMenu } from 'shared-utils/lib/services/types/SidebarMenu.type';
+import { ISidebarMenu, IMenu } from 'shared-utils/lib/services/types/SidebarMenu.type';
 import { Subscription } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 
@@ -15,6 +15,10 @@ import { environment } from '../../../../environments/environment';
 export class MenuComponent implements OnInit, OnDestroy {
   nameApp = environment.nameApp;
   sidebarClosed = false;
+  /** Índice del ítem con flyout abierto (solo en modo colapsado desktop). */
+  flyoutIndex: number | null = null;
+  /** Mensaje de error transitorio para EB-04 (logout fallido). */
+  logoutError: string | null = null;
 
   readonly displayName!: Signal<string>;
   readonly email!: Signal<string>;
@@ -25,6 +29,7 @@ export class MenuComponent implements OnInit, OnDestroy {
   @ViewChild('toggleBtn', { static: true }) toggleButton?: ElementRef<HTMLElement>;
 
   private sidebarSub?: Subscription;
+  private logoutTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor(
     private _sesionService: SesionService,
@@ -42,19 +47,34 @@ export class MenuComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.sidebarSub = this.layoutStateService.sidebarClosed$.subscribe((closed) => {
       this.sidebarClosed = closed;
+      if (!closed) {
+        this.flyoutIndex = null;
+      }
     });
   }
 
   ngOnDestroy(): void {
     this.sidebarSub?.unsubscribe();
+    if (this.logoutTimer !== null) {
+      clearTimeout(this.logoutTimer);
+    }
   }
 
   toggleSidebar(): void {
     this.layoutStateService.toggleSidebarState();
     this.closeAllSubMenus();
+    this.flyoutIndex = null;
   }
 
-  toggleSubMenu(event: Event): void {
+  toggleSubMenu(event: Event, index: number): void {
+    event.stopPropagation();
+
+    if (this.sidebarClosed) {
+      // CA-02: en modo colapsado mostrar flyout lateral en lugar de expandir
+      this.flyoutIndex = this.flyoutIndex === index ? null : index;
+      return;
+    }
+
     const button = event.currentTarget as HTMLElement | null;
     const sidebar = this.sidebar?.nativeElement;
     if (!button || !sidebar) return;
@@ -68,10 +88,6 @@ export class MenuComponent implements OnInit, OnDestroy {
 
     nextElement.classList.toggle('show');
     button.classList.toggle('rotate');
-
-    if (sidebar.classList.contains('close')) {
-      this.layoutStateService.setSidebarClosedState(false);
-    }
   }
 
   closeAllSubMenus(): void {
@@ -93,19 +109,38 @@ export class MenuComponent implements OnInit, OnDestroy {
 
     if (!sidebar.contains(target)) {
       this.closeAllSubMenus();
+      this.flyoutIndex = null;
     }
   }
 
   goTo(ruta: string): void {
+    this.flyoutIndex = null;
     this._router.navigate([ruta], { relativeTo: this.activatedRoute });
   }
 
+  /** Devuelve true si el ítem de nivel 1 o alguno de sus subniveles está activo. */
+  isActive(item: ISidebarMenu): boolean {
+    const url = this._router.url;
+    if (item.ruta) {
+      return url.includes(item.ruta);
+    }
+    return item.subMenus?.some((sub: IMenu) => url.includes(sub.ruta)) ?? false;
+  }
+
+  /** Devuelve true si la ruta de un subnivel está activa. */
+  isSubActive(ruta: string): boolean {
+    return this._router.url.includes(ruta);
+  }
+
   async logout(): Promise<void> {
+    this.logoutError = null;
     try {
       await this._sesionService.logout();
-      window.location.href = environment.appLogin;
-    } catch (error) {
-      console.error('Error during logout:', error);
+      globalThis.location.href = environment.appLogin;
+    } catch {
+      // EB-04: logout fallido — mostrar toast y mantener sesión activa
+      this.logoutError = 'No se pudo cerrar la sesión. Intenta nuevamente.';
+      this.logoutTimer = setTimeout(() => { this.logoutError = null; }, 4000);
     }
   }
 }

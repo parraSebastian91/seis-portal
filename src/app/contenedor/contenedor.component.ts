@@ -122,12 +122,11 @@ export class ContenedorComponent implements OnInit {
 
 
   private updateViewportMode(): void {
-    if (typeof window === 'undefined') {
+    if (typeof globalThis.innerWidth === 'undefined') {
       this.isMobileView.set(false);
       return;
     }
-    console.log('Window resized, updating mobile view state. Current width:', window.innerWidth);
-    this.isMobileView.set(window.innerWidth <= 980);
+    this.isMobileView.set(globalThis.innerWidth <= 980);
   }
 
 }

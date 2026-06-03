@@ -11,11 +11,11 @@
     </div>
 
     <div class="top-navbar-actions">
-        <button class="btn-mini-fab" (click)="onAccountClick()" aria-label="notificaciones">
+        <button class="btn-mini-fab" (click)="onAccountClick()" aria-label="Ir al perfil">
             <mat-icon aria-hidden="false">account_circle</mat-icon>
         </button>
         <button class="btn-mini-fab" [class.badge-pulse]="badgePulse" (click)="onNotificationsClick()"
-            [attr.aria-expanded]="notificationsPanelOpen" aria-label="notificaciones">
+            [attr.aria-expanded]="notificationsPanelOpen" aria-label="Notificaciones">
             <mat-icon aria-hidden="false" [matBadge]="notificationBadgeText" matBadgeColor="warn"
                 [matBadgeHidden]="!notificationBadgeText">notifications</mat-icon>
         </button>
