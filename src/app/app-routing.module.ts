@@ -1,23 +1,42 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { ContenedorComponent } from './contenedor/contenedor.component';
+import { authGuard } from './guards/auth.guard';
 
 const routes: Routes = [
+  // ── Alias por rol → redirigen al MFE correspondiente ──────────────────────
+  { path: 'publicador', redirectTo: 'contenedor/pages/factoring/publicador-facturas', pathMatch: 'full' },
+  { path: 'ofertador',  redirectTo: 'contenedor/pages/factoring/ofertador-facturas',  pathMatch: 'full' },
+  { path: 'dashboard',  redirectTo: 'contenedor/pages/factoring/dashboard-facturas',  pathMatch: 'full' },
+
+  // ── Autenticación: callback PKCE + redirect a login ────────────────────────
+  {
+    path: 'auth',
+    loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule),
+  },
+
+  // ── Shell principal (rutas protegidas) ─────────────────────────────────────
   {
     path: 'contenedor',
     component: ContenedorComponent,
-    loadChildren: () => import('./contenedor/contenedor-routing.module').then(m => m.ContenedoRoutingModule)
+    canActivate: [authGuard],
+    loadChildren: () =>
+      import('./contenedor/contenedor-routing.module').then(m => m.ContenedoRoutingModule),
   },
+
+  // ── Otras páginas (validate, inicio) ──────────────────────────────────────
   {
     path: 'erp',
-    loadChildren: () => import('./pages/pages-routing.module').then(m => m.PagesRoutingModule)
+    loadChildren: () => import('./pages/pages-routing.module').then(m => m.PagesRoutingModule),
   },
-  // Wildcard route must be last — redirect unknown paths to the validate screen
-  // { path: '**', redirectTo: 'erp/validate', pathMatch: 'full' }
+
+  // ── Ruta raíz → redirect a login ──────────────────────────────────────────
+  { path: '', redirectTo: 'auth/redirect-to-login', pathMatch: 'full' },
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AppRoutingModule { } 
+export class AppRoutingModule {}
+

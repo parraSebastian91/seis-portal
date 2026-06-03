@@ -1,30 +1,33 @@
 
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { CommonModule } from '@angular/common';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { provideHttpClient, withInterceptors, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { PagesModule } from './pages/pages.module';
 import { ContenedorModule } from './contenedor/contenedor.module';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {
   credentialsInterceptor,
   authRefreshInterceptor,
   errorInterceptor,
   CorrelationIdInterceptor,
 } from 'shared-utils';
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
 
 @NgModule({
   declarations: [
     AppComponent
   ],
   imports: [
+    BrowserModule,
+    CommonModule,
+    AppRoutingModule,
     PagesModule,
     ContenedorModule,
-    BrowserModule,
-    AppRoutingModule,
+    MatProgressSpinnerModule,
   ],
   providers: [
     provideAnimationsAsync(),
@@ -45,3 +48,4 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
   bootstrap: [AppComponent],
 })
 export class AppModule { }
+

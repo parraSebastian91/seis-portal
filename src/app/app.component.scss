@@ -1,0 +1,6 @@
+.global-restore-spinner {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  background: var(--bg, #fafafa);
+}

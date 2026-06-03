@@ -1,0 +1,18 @@
+<div class="callback-wrap">
+
+  <!-- Estado: cargando -->
+  <ng-container *ngIf="loading && !errorMsg">
+    <mat-spinner diameter="48"></mat-spinner>
+    <p class="message">Verificando acceso&hellip;</p>
+  </ng-container>
+
+  <!-- Estado: error -->
+  <ng-container *ngIf="errorMsg">
+    <span class="error-icon material-icons" aria-hidden="true">error_outline</span>
+    <p class="error-msg" role="alert">{{ errorMsg }}</p>
+    <button class="btn-link" type="button" (click)="goToLogin()">
+      Volver al inicio de sesión
+    </button>
+  </ng-container>
+
+</div>
