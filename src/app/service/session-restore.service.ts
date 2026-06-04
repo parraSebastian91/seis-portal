@@ -1,5 +1,5 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpStatusCode } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { catchError, finalize, map } from 'rxjs/operators';
 import { SessionService, User } from 'shared-utils';
@@ -28,17 +28,31 @@ export class SessionRestoreService {
   tryRestore(): Observable<boolean> {
     this.restoring.set(true);
     const url = `${this.config.getApiBase()}/api/core/usuario/profile`;
-
+    const codesValidos =
+      [
+        HttpStatusCode.Unauthorized
+      ];
     return this.http.get<ProfileApiResponse>(url).pipe(
       map(res => {
         const user = res.data?.[0];
+        console.log('Intento de restauración de sesión:', user ? 'Éxito' : 'No hay sesión válida');
         if (user) {
           this.session.setSession(user, null);
           return true;
         }
         return false;
       }),
-      catchError(() => of(false)),
+      catchError((error: HttpErrorResponse) => {
+        console.log('Error al intentar restaurar sesión:', error);
+        // Solo redirigimos a login cuando el backend confirma sesión inválida.
+        // Errores transitorios (timeouts, 5xx, gateway) no deben tumbar la navegación.
+        if (codesValidos.includes(error.status)) {
+          console.log('Sesión no válida, redirigiendo a login...');
+          return of(false);
+        }
+        console.log('Error de red o servidor, pero no confirmación de sesión inválida. Permitiendo navegación...');
+        return of(true);
+      }),
       finalize(() => this.restoring.set(false)),
     );
   }

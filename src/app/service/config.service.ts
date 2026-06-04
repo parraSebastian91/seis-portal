@@ -32,7 +32,9 @@ export class ConfigService {
     const proto = this.getProtocol();
     const host = this.getHost();
     const port = this.getPort();
-    return `${proto}://${host}${port ? ':' + port : ''}`;
+    const base = `${proto}://${host}${port ? `:${port}` : ''}`;
+    console.log('API base URL:', base);
+    return base;
   }
 
   getApiBase(path = ''): string {

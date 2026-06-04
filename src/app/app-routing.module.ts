@@ -47,7 +47,7 @@ const routes: Routes = [
   },
 
   // ── Ruta raíz → redirect a login ──────────────────────────────────────────
-  { path: '', redirectTo: 'auth/redirect-to-login', pathMatch: 'full' },
+  // { path: '', redirectTo: 'auth/redirect-to-login', pathMatch: 'full' },
 ];
 
 @NgModule({
