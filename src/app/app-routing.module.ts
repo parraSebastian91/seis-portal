@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { ContenedorComponent } from './contenedor/contenedor.component';
 import { authGuard } from './guards/auth.guard';
+import { hasOrgGuard } from './guards/has-org.guard';
 
 const routes: Routes = [
   // ── Alias por rol → redirigen al MFE correspondiente ──────────────────────
@@ -20,11 +21,21 @@ const routes: Routes = [
     loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule),
   },
 
+  // ── Sin organización (post-registro) ──────────────────────────────────────
+  {
+    path: 'sin-organizacion',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./no-organization-gate/no-organization-gate.component').then(
+        m => m.NoOrganizationGateComponent
+      ),
+  },
+
   // ── Shell principal (rutas protegidas) ─────────────────────────────────────
   {
     path: 'contenedor',
     component: ContenedorComponent,
-    canActivate: [authGuard],
+    canActivate: [authGuard, hasOrgGuard],
     loadChildren: () =>
       import('./contenedor/contenedor-routing.module').then(m => m.ContenedoRoutingModule),
   },

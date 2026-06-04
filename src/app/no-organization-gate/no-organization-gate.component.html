@@ -1,0 +1,54 @@
+<div class="gate">
+  <div class="gate__card">
+    <span class="material-icons gate__icon" aria-hidden="true">business_center</span>
+    <h1 class="gate__title">Para comenzar, configura tu organización.</h1>
+    <p class="gate__subtitle">
+      Aún no perteneces a ninguna organización. Crea una nueva o únete a una existente para poder operar.
+    </p>
+
+    <div class="gate__actions">
+      <button type="button" class="gate__btn gate__btn--primary" (click)="onCreateOrg()">
+        <span class="material-icons" aria-hidden="true">add_business</span>
+        Crear nueva organización
+      </button>
+
+      <button type="button" class="gate__btn gate__btn--secondary" (click)="onToggleJoin()">
+        <span class="material-icons" aria-hidden="true">group_add</span>
+        Unirme a una organización existente
+      </button>
+    </div>
+
+    @if (showJoinForm()) {
+      <div class="gate__join-form" role="region" aria-label="Ingresar código de acceso">
+        <label class="gate__label" for="access-code">Código de acceso</label>
+        <div class="gate__input-row">
+          <input
+            id="access-code"
+            type="text"
+            class="gate__input"
+            placeholder="Ej: ABCD-1234"
+            maxlength="20"
+            autocomplete="off"
+            [value]="accessCode()"
+            (input)="onAccessCodeInput($any($event.target).value)"
+          />
+          <button
+            type="button"
+            class="gate__btn gate__btn--submit"
+            [disabled]="joinLoading() || accessCode().trim().length === 0"
+            (click)="onJoinSubmit()"
+          >
+            @if (joinLoading()) {
+              <span class="material-icons gate__spin" aria-hidden="true">refresh</span>
+            } @else {
+              Unirme
+            }
+          </button>
+        </div>
+        @if (joinError()) {
+          <p class="gate__error" role="alert">{{ joinError() }}</p>
+        }
+      </div>
+    }
+  </div>
+</div>
