@@ -50,7 +50,7 @@
                 <span class="material-icons ns-cat-icon" aria-hidden="true">{{ cat.icon }}</span>
                 <span class="ns-cat-label">{{ cat.label }}</span>
                 @if (cat.unreadCount > 0) {
-                  <span class="ns-cat-unread" aria-label="{{ cat.unreadCount }} no leídas">
+                  <span class="ns-cat-unread" [attr.aria-label]="cat.unreadCount + ' no leídas'">
                     <span class="material-icons ns-cat-unread-icon" aria-hidden="true">format_list_bulleted</span>
                     {{ cat.unreadCount }}
                   </span>
