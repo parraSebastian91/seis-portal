@@ -115,7 +115,8 @@ export class MenuComponent implements OnInit, OnDestroy {
 
   goTo(ruta: string): void {
     this.flyoutIndex = null;
-    this._router.navigate([ruta], { relativeTo: this.activatedRoute });
+    const absoluteRoute = ruta.startsWith('/') ? ruta : `/${ruta}`;
+    this._router.navigateByUrl(absoluteRoute);
   }
 
   /** Devuelve true si el ítem de nivel 1 o alguno de sus subniveles está activo. */
