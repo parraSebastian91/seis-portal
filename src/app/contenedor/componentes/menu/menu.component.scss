@@ -278,6 +278,161 @@
     background-color: var(--focus-background);
 }
 
+/* ═══════════════════════════════════════════════════════════════════
+   RESPONSIVE — Barra de navegación inferior (mobile ≤ 700px)
+   ═══════════════════════════════════════════════════════════════════ */
+@media (max-width: 700px) {
+
+    /* El host no ocupa columna en el grid */
+    :host {
+        display: block;
+        height: 64px;
+    }
+
+    /* Sidebar se convierte en bottom bar */
+    #sidebar,
+    #sidebar.close {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        top: auto;
+        width: 100%;
+        height: 64px;
+        border-right: none;
+        border-top: 1.5px solid var(--line-clr);
+        overflow: visible;
+        z-index: 101;
+    }
+
+    /* Lista horizontal */
+    #sidebar ul {
+        flex-direction: row;
+        height: 64px;
+        align-items: stretch;
+        padding: 0;
+    }
+
+    /* Ocultar primer li (logo + toggle-btn) */
+    #sidebar > ul > li:first-child {
+        display: none;
+    }
+
+    /* Ocultar estado vacío */
+    #sidebar .menu-empty-state {
+        display: none;
+    }
+
+    /* Ítems de menú: distribuidos igualmente */
+    #sidebar > ul > li:not(:first-child):not(.user-profile) {
+        flex: 1;
+        display: flex;
+        align-items: stretch;
+    }
+
+    /* Botones y links en columna (icono + label) */
+    #sidebar a,
+    #sidebar .dropdown-btn {
+        flex-direction: column;
+        gap: 0.15em;
+        padding: 0.45em 0.25em;
+        border-radius: 0;
+        text-align: center;
+        width: 100%;
+        justify-content: center;
+        align-items: center;
+        font-size: 0.68rem;
+        height: 100%;
+    }
+
+    /* Ocultar el chevron de acordeón */
+    #sidebar .dropdown-btn > .svg:last-child {
+        display: none;
+    }
+
+    /* Acordeón deshabilitado en mobile */
+    #sidebar .sub-menu {
+        display: none !important;
+    }
+
+    /* Flyout se abre HACIA ARRIBA, ancho completo */
+    .flyout-panel {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 64px;
+        top: auto;
+        width: 100%;
+        min-width: unset;
+        border-radius: 0.75em 0.75em 0 0;
+        border-left: 1.5px solid var(--line-clr);
+        border-right: 1.5px solid var(--line-clr);
+        border-top: 1.5px solid var(--line-clr);
+        border-bottom: none;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.25rem;
+        padding: 0.75rem;
+        max-height: 50dvh;
+        overflow-y: auto;
+    }
+
+    .flyout-panel .flyout-header {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+
+    .flyout-panel li {
+        flex: 1 1 120px;
+    }
+
+    .flyout-panel a {
+        text-align: center;
+        justify-content: center;
+    }
+
+    /* Perfil de usuario: icono compacto a la derecha */
+    .user-profile {
+        border-top: none;
+        border-left: 1.5px solid var(--line-clr);
+        padding: 0 !important;
+        flex: 0 0 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        margin-top: 0 !important;
+        position: static;
+        background-color: var(--background-menu);
+    }
+
+    .user-info {
+        display: none;
+    }
+
+    .logout-btn {
+        width: 44px;
+        height: 44px;
+        padding: 0.4em;
+    }
+
+    /* Error de logout: toast flotante sobre la barra */
+    .logout-error {
+        position: fixed;
+        bottom: 72px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--error-color, #d32f2f);
+        color: #fff;
+        padding: 0.5rem 1.25rem;
+        border-radius: 0.5rem;
+        font-size: 0.85rem;
+        white-space: nowrap;
+        z-index: 500;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+    }
+}
+
 .flyout-panel li.active a {
     color: var(--primary-color, #1976d2);
     font-weight: 600;

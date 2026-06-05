@@ -1,4 +1,5 @@
-import { Component, ElementRef, HostListener, Inject, OnDestroy, OnInit, Signal, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, Inject, OnDestroy, OnInit, Signal, ViewChild, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { SesionService } from '../../../service/sesion.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LayoutStateService, UserStateService } from 'shared-utils';
@@ -15,6 +16,7 @@ import { environment } from '../../../../environments/environment';
 export class MenuComponent implements OnInit, OnDestroy {
   nameApp = environment.nameApp;
   sidebarClosed = false;
+  isMobile = false;
   /** Índice del ítem con flyout abierto (solo en modo colapsado desktop). */
   flyoutIndex: number | null = null;
   /** Mensaje de error transitorio para EB-04 (logout fallido). */
@@ -36,7 +38,8 @@ export class MenuComponent implements OnInit, OnDestroy {
     private _router: Router,
     private activatedRoute: ActivatedRoute,
     private userStateService: UserStateService,
-    @Inject(LayoutStateService) private layoutStateService: LayoutStateService
+    @Inject(LayoutStateService) private layoutStateService: LayoutStateService,
+    @Inject(PLATFORM_ID) private platformId: object
   ) {
     this.displayName = this.userStateService.displayName;
     this.email = this.userStateService.email;
@@ -45,12 +48,23 @@ export class MenuComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      this.isMobile = window.innerWidth <= 700;
+    }
     this.sidebarSub = this.layoutStateService.sidebarClosed$.subscribe((closed) => {
       this.sidebarClosed = closed;
       if (!closed) {
         this.flyoutIndex = null;
       }
     });
+  }
+
+  @HostListener('window:resize')
+  onResize(): void {
+    this.isMobile = window.innerWidth <= 700;
+    if (!this.isMobile) {
+      this.flyoutIndex = null;
+    }
   }
 
   ngOnDestroy(): void {
@@ -69,8 +83,8 @@ export class MenuComponent implements OnInit, OnDestroy {
   toggleSubMenu(event: Event, index: number): void {
     event.stopPropagation();
 
-    if (this.sidebarClosed) {
-      // CA-02: en modo colapsado mostrar flyout lateral en lugar de expandir
+    if (this.sidebarClosed || this.isMobile) {
+      // En modo colapsado (desktop) o mobile: flyout en lugar de acordeón
       this.flyoutIndex = this.flyoutIndex === index ? null : index;
       return;
     }

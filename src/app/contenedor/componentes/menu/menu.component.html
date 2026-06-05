@@ -48,8 +48,8 @@
                             }
                         </div>
                     </ul>
-                    <!-- Flyout para modo colapsado (CA-02) -->
-                    @if (sidebarClosed && flyoutIndex === i) {
+                    <!-- Flyout para modo colapsado (CA-02) y mobile -->
+                    @if ((sidebarClosed || isMobile) && flyoutIndex === i) {
                         <ul class="flyout-panel" (click)="$event.stopPropagation()">
                             <li class="flyout-header">{{ item.nombre }}</li>
                             @for (subItem of item.subMenus; track subItem.ruta) {
