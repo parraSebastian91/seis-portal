@@ -283,13 +283,13 @@
    ═══════════════════════════════════════════════════════════════════ */
 @media (max-width: 700px) {
 
-    /* El host no ocupa columna en el grid */
+    /* Host reserva altura de la barra */
     :host {
         display: block;
         height: 64px;
     }
 
-    /* Sidebar se convierte en bottom bar */
+    /* ── Barra fija pegada al fondo, ancho completo ── */
     #sidebar,
     #sidebar.close {
         position: fixed;
@@ -300,61 +300,100 @@
         height: 64px;
         border-right: none;
         border-top: 1.5px solid var(--line-clr);
-        overflow: visible;
-        z-index: 101;
+        overflow: visible;     /* permite que el flyout salga hacia arriba */
+        z-index: 110;
+        background-color: var(--background-menu);
     }
 
-    /* Lista horizontal */
+    /* ── Lista: fila con space-between ── */
     #sidebar ul {
         flex-direction: row;
         height: 64px;
         align-items: stretch;
         padding: 0;
+        justify-content: space-between;
     }
 
-    /* Ocultar primer li (logo + toggle-btn) */
-    #sidebar > ul > li:first-child {
-        display: none;
-    }
+    /* Ocultar: logo/toggle y estado vacío */
+    #sidebar > ul > li:first-child,
+    #sidebar .menu-empty-state { display: none; }
 
-    /* Ocultar estado vacío */
-    #sidebar .menu-empty-state {
-        display: none;
-    }
-
-    /* Ítems de menú: distribuidos igualmente */
+    /* Ítems de primer nivel: cada uno ocupa espacio equitativo */
     #sidebar > ul > li:not(:first-child):not(.user-profile) {
         flex: 1;
         display: flex;
         align-items: stretch;
     }
 
-    /* Botones y links en columna (icono + label) */
+    /* ── Botón: solo icono, centrado ── */
     #sidebar a,
     #sidebar .dropdown-btn {
         flex-direction: column;
-        gap: 0.15em;
-        padding: 0.45em 0.25em;
+        gap: 0;
+        padding: 0;
         border-radius: 0;
-        text-align: center;
         width: 100%;
+        height: 100%;
         justify-content: center;
         align-items: center;
-        font-size: 0.68rem;
-        height: 100%;
+        background: transparent;
+        color: var(--font-color);
+        opacity: 0.5;
+        transition: opacity 0.15s;
     }
 
-    /* Ocultar el chevron de acordeón */
-    #sidebar .dropdown-btn > .svg:last-child {
-        display: none;
+    #sidebar a:hover,
+    #sidebar .dropdown-btn:hover {
+        background: transparent;
+        opacity: 0.85;
     }
 
-    /* Acordeón deshabilitado en mobile */
-    #sidebar .sub-menu {
+    /* Icono visible y bien dimensionado */
+    #sidebar a .svg,
+    #sidebar .dropdown-btn .svg {
+        font-size: 26px !important;
+        width: 26px !important;
+        height: 26px !important;
+    }
+
+    /* Ocultar TODOS los textos del primer nivel */
+    #sidebar > ul > li:not(:first-child):not(.user-profile) .dropdown-btn > span:not([aria-hidden]),
+    #sidebar > ul > li:not(:first-child):not(.user-profile) a > span {
         display: none !important;
     }
 
-    /* Flyout se abre HACIA ARRIBA, ancho completo */
+    /* Ocultar chevron de acordeón */
+    #sidebar .dropdown-btn > svg.svg:last-child { display: none; }
+
+    /* Deshabilitar acordeón interno */
+    #sidebar .sub-menu { display: none !important; }
+
+    /* ── Activo: pastilla encima del icono ── */
+    #sidebar .dropdown-btn.active {
+        opacity: 1;
+        background: transparent;
+        position: relative;
+        color: var(--font-color);
+    }
+
+    #sidebar .dropdown-btn.active::before {
+        content: '';
+        position: absolute;
+        top: 8px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 32px;
+        height: 3px;
+        border-radius: 2px;
+        background: var(--focus-background, #5e63ff);
+    }
+
+    #sidebar .dropdown-btn.active .svg {
+        fill: var(--font-color);
+        color: var(--font-color);
+    }
+
+    /* ── Flyout: se despliega SOBRE la barra, scroll horizontal ── */
     .flyout-panel {
         position: fixed;
         left: 0;
@@ -363,190 +402,95 @@
         top: auto;
         width: 100%;
         min-width: unset;
-        border-radius: 0.75em 0.75em 0 0;
-        border-left: 1.5px solid var(--line-clr);
-        border-right: 1.5px solid var(--line-clr);
-        border-top: 1.5px solid var(--line-clr);
-        border-bottom: none;
-        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2);
+        /* scroll lateral si el menú es largo */
         display: flex;
-        flex-wrap: wrap;
-        gap: 0.25rem;
-        padding: 0.75rem;
-        max-height: 50dvh;
-        overflow-y: auto;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        gap: 0;
+        padding: 0;
+        max-height: none;
+        overflow-x: auto;
+        overflow-y: visible;
+        scrollbar-width: none;
+        border-radius: 12px 12px 0 0;
+        border: 1.5px solid var(--line-clr);
+        border-bottom: none;
+        box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.3);
+        background-color: var(--background-menu);
+        z-index: 200;
+        animation: flyout-slide-up 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
 
-    .flyout-panel .flyout-header {
-        width: 100%;
-        margin-bottom: 0.5rem;
+    .flyout-panel::-webkit-scrollbar { display: none; }
+
+    @keyframes flyout-slide-up {
+        from { transform: translateY(100%); opacity: 0; }
+        to   { transform: translateY(0);    opacity: 1; }
     }
 
+    /* Ocultar cabecera de sección en mobile (no tiene sentido en fila) */
+    .flyout-panel .flyout-header { display: none; }
+
+    /* Cada ítem de submenu: bloque en la fila horizontal */
     .flyout-panel li {
-        flex: 1 1 120px;
+        flex: 0 0 auto;
+        list-style: none;
     }
 
+    /* Enlace de submenu: resetear herencia de #sidebar a y estilar correctamente */
     .flyout-panel a {
-        text-align: center;
-        justify-content: center;
-    }
-
-    /* Perfil de usuario: icono compacto a la derecha */
-    .user-profile {
-        border-top: none;
-        border-left: 1.5px solid var(--line-clr);
-        padding: 0 !important;
-        flex: 0 0 60px;
+        /* reset de lo que hereda de #sidebar a en mobile */
+        flex-direction: row !important;
+        opacity: 1 !important;
+        color: var(--font-color) !important;
+        /* estilos propios */
         display: flex;
         align-items: center;
         justify-content: center;
-        flex-direction: column;
+        padding: 0 24px;
+        height: 56px;
+        min-width: 80px;
+        white-space: nowrap;
+        text-align: center;
+        font-size: 0.9rem;
+        font-weight: 500;
+        background: transparent;
+        border-right: 1px solid var(--line-clr);
+        border-radius: 0;
+        margin: 0;
+        transition: background 0.15s;
+    }
+
+    .flyout-panel a:hover {
+        background-color: var(--focus-background) !important;
+        opacity: 1 !important;
+    }
+
+    .flyout-panel li.active a {
+        font-weight: 700;
+        background-color: var(--focus-background) !important;
+    }
+
+    /* ── Perfil: OCULTO en mobile ── */
+    .user-profile {
+        display: none !important;
         margin-top: 0 !important;
-        position: static;
-        background-color: var(--background-menu);
     }
 
-    .user-info {
-        display: none;
-    }
-
-    .logout-btn {
-        width: 44px;
-        height: 44px;
-        padding: 0.4em;
-    }
-
-    /* Error de logout: toast flotante sobre la barra */
+    /* ── Toast de error ── */
     .logout-error {
         position: fixed;
         bottom: 72px;
         left: 50%;
         transform: translateX(-50%);
-        background: var(--error-color, #d32f2f);
+        background: var(--color-error, #d32f2f);
         color: #fff;
         padding: 0.5rem 1.25rem;
         border-radius: 0.5rem;
         font-size: 0.85rem;
         white-space: nowrap;
         z-index: 500;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
     }
 }
-
-.flyout-panel li.active a {
-    color: var(--primary-color, #1976d2);
-    font-weight: 600;
-    background-color: var(--focus-background);
-}
-
-/* ── Estado vacío del menú (EB-01) ────────────────────────────────── */
-.menu-empty-state {
-    display: flex;
-    align-items: center;
-    gap: 1em;
-    padding: 1rem 0.85em;
-    color: var(--font-color);
-    opacity: 0.45;
-    font-size: 0.85rem;
-    list-style: none;
-}
-
-/* ── Toast de error de logout (EB-04) ─────────────────────────────── */
-.logout-error {
-    width: 100%;
-    padding: 0.5rem 0.75rem;
-    margin-bottom: 0.5rem;
-    background-color: var(--color-error, #d32f2f);
-    color: #fff;
-    border-radius: 0.4rem;
-    font-size: 0.8rem;
-    line-height: 1.4;
-    text-align: center;
-}
-
-#sidebar.close .user-avatar,
-#sidebar.close .user-details {
-    display: none;
-}
-
-@media(max-width: 700px) {
-    #sidebar {
-        height: 60px;
-        width: 100%;
-        left: 0;
-        top: unset;
-        bottom: 0;
-        z-index: 110;
-        border-right: none;
-        border-top: 1px solid var(--line-clr);
-        padding: 0;
-    }
-
-    #sidebar>ul {
-        padding: 0;
-        display: grid;
-        grid-auto-columns: 60px;
-        grid-auto-flow: column;
-        align-items: center;
-        overflow-x: scroll;
-        justify-content: center;
-    }
-
-    #sidebar ul li {
-        height: 100%;
-    }
-
-    #sidebar ul a,
-    #sidebar ul .dropdown-btn {
-        width: 60px;
-        height: 60px;
-        padding: 0;
-        border-radius: 0;
-        justify-content: center;
-    }
-
-    #sidebar ul li span,
-    #sidebar ul li:first-child,
-    #sidebar .dropdown-btn .svg:last-child {
-        display: none;
-    }
-
-    #sidebar .sub-menu {
-        display: none;
-        grid-template-rows: unset;
-    }
-
-    #sidebar ul li .sub-menu.show {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-around;
-        position: fixed;
-        top: auto;
-        bottom: 60px;
-        left: 0;
-        box-sizing: border-box;
-        height: 60px;
-        width: 100%;
-        background-color: var(--focus-background);
-        border-top: 1px solid var(--line-clr);
-    }
-
-    #sidebar ul li .sub-menu.show>div {
-        overflow-x: auto;
-    }
-
-    #sidebar ul li .sub-menu.show li {
-        display: inline-flex;
-    }
-
-    #sidebar ul li .sub-menu.show a {
-        box-sizing: border-box;
-        padding: 1em;
-        width: auto;
-        justify-content: center;
-    }
-
-    .user-profile {
-        display: none !important;
-    }
-}
+        

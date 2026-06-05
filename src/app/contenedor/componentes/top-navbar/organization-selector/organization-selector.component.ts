@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { SearchableCardItem, SearchableCardSelectComponent, UserStateService } from 'shared-utils';
 
 @Component({
@@ -11,6 +12,7 @@ import { SearchableCardItem, SearchableCardSelectComponent, UserStateService } f
 })
 export class OrganizationSelectorComponent implements OnInit {
   private readonly userStateService = inject(UserStateService);
+  private readonly router = inject(Router);
 
   get items(): SearchableCardItem[] {
     return this.userStateService.organizationProfile().map(org => ({
@@ -36,5 +38,9 @@ export class OrganizationSelectorComponent implements OnInit {
 
   onSelectionChange(item: SearchableCardItem): void {
     this.userStateService.setOrgSelected(item.id);
+  }
+
+  onProfileClick(item: SearchableCardItem): void {
+    this.router.navigate(['/contenedor/pages/organizaciones', item.id]);
   }
 }

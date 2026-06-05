@@ -92,7 +92,7 @@ export class ContenedorComponent implements OnInit {
   }
 
   onAccountClick(): void {
-    this.router.navigate(['contenedor/pages/view-profile']);
+    this.router.navigate(['/contenedor/pages/view-profile']);
   }
 
   @HostListener('window:resize')
