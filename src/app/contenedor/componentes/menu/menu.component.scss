@@ -431,9 +431,10 @@
     /* Ocultar cabecera de sección en mobile (no tiene sentido en fila) */
     .flyout-panel .flyout-header { display: none; }
 
-    /* Cada ítem de submenu: bloque en la fila horizontal */
+    /* Cada ítem de submenu: crece para llenar el ancho, nunca se encoge bajo su texto */
     .flyout-panel li {
-        flex: 0 0 auto;
+        flex: 1 1 auto;
+        min-width: max-content;
         list-style: none;
     }
 
@@ -455,10 +456,14 @@
         font-size: 0.9rem;
         font-weight: 500;
         background: transparent;
-        border-right: 1px solid var(--line-clr);
+        border-right: none;
         border-radius: 0;
         margin: 0;
         transition: background 0.15s;
+    }
+
+    .flyout-panel li:not(:last-child) a {
+        border-right: 1px solid var(--line-clr);
     }
 
     .flyout-panel a:hover {
