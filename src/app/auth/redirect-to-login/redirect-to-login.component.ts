@@ -33,6 +33,6 @@ export class RedirectToLoginComponent implements OnInit {
     const target = returnUrl
       ? `${this.loginUrl}?returnUrl=${encodeURIComponent(returnUrl)}`
       : this.loginUrl;
-    // globalThis.location.href = target;
+    globalThis.location.href = target;
   }
 }

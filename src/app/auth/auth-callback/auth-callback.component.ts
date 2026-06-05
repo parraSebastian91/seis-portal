@@ -162,7 +162,7 @@ export class AuthCallbackComponent implements OnInit, OnDestroy {
       }, 3000);
       // Paso 3: obtener perfil con la cookie recién seteada
       // const profileRes = await firstValueFrom(
-      //   this.http.get<ProfileApiResponse>(`${base}/api/core/usuario/profile`),
+      //   this.http.get<ProfileApiResponse>(`${base}/api/bff/usuario/profile`),
       // );
 
       // const user = profileRes.data?.[0];

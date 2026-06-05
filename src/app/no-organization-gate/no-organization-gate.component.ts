@@ -50,7 +50,7 @@ export class NoOrganizationGateComponent {
     this.joinLoading.set(true);
     this.joinError.set('');
 
-    this.http.post<{ organizationUuid: string }>('/api/core/org/join', { accessCode: code }).subscribe({
+    this.http.post<{ organizationUuid: string }>('/api/bff/org/join', { accessCode: code }).subscribe({
       next: (res) => {
         this.joinLoading.set(false);
         this.userState.setOrgSelected(res.organizationUuid);

@@ -5,8 +5,16 @@ import { catchError, finalize, map } from 'rxjs/operators';
 import { SessionService, User } from 'shared-utils';
 import { ConfigService } from './config.service';
 
+interface BffProfileData {
+  usuarioUUID: string;
+  username: string;
+  nombreCompleto: string;
+  nombre?: { nombres: string; apellidoPaterno: string; apellidoMaterno?: string };
+  datosContacto?: { correo?: string };
+}
+
 interface ProfileApiResponse {
-  data: User[];
+  data: BffProfileData;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -27,16 +35,25 @@ export class SessionRestoreService {
    */
   tryRestore(): Observable<boolean> {
     this.restoring.set(true);
-    const url = `${this.config.getApiBase()}/api/core/usuario/profile`;
+    const url = `${this.config.getApiBase()}/api/bff/usuario/profile`;
     const codesValidos =
       [
         HttpStatusCode.Unauthorized
       ];
     return this.http.get<ProfileApiResponse>(url).pipe(
       map(res => {
-        const user = res.data?.[0];
-        console.log('Intento de restauración de sesión:', user ? 'Éxito' : 'No hay sesión válida');
-        if (user) {
+        const profile = res.data;
+        const ok = !!profile?.usuarioUUID;
+        console.log('Intento de restauración de sesión:', ok ? 'Éxito' : 'No hay sesión válida');
+        if (ok) {
+          const user: User = {
+            id: profile.usuarioUUID,
+            username: profile.username,
+            correo: profile.datosContacto?.correo ?? '',
+            nombre: profile.nombre?.nombres ?? profile.nombreCompleto ?? '',
+            apellido: profile.nombre?.apellidoPaterno ?? '',
+            rol: 'USR_STD',
+          };
           this.session.setSession(user, null);
           return true;
         }

@@ -23,6 +23,7 @@ import { MatBadgeModule } from '@angular/material/badge';
 import { SearchableCardSelectComponent } from 'shared-utils';
 import { OrganizationSelectorComponent } from './componentes/top-navbar/organization-selector/organization-selector.component';
 import { NotificationsSidebarComponent } from './componentes/notifications-sidebar/notifications-sidebar.component';
+import { AppDrawerComponent } from './componentes/app-drawer/app-drawer.component';
 
 @NgModule({
   declarations: [
@@ -48,6 +49,7 @@ import { NotificationsSidebarComponent } from './componentes/notifications-sideb
     SearchableCardSelectComponent,
     OrganizationSelectorComponent,
     NotificationsSidebarComponent,
+    AppDrawerComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
