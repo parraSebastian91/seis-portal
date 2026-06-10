@@ -1,3 +1,13 @@
+// ─── Factor Design System tokens ──────────────────────────────────────────────
+$bg-surface   : var(--color-bg-surface,   var(--background-menu, #1A237E));
+$bg-elevated  : var(--color-bg-elevated,  #1E2A8A);
+$text         : var(--color-text-primary, var(--font-color, #fff));
+$text-muted   : var(--color-text-secondary, rgba(255,255,255,.55));
+$border       : var(--color-border,       var(--line-clr, rgba(255,255,255,.08)));
+$brand        : var(--color-brand-primary, #00BFA5);
+$hover-bg     : rgba(255,255,255,0.06);
+
+// ─── Bar ──────────────────────────────────────────────────────────────────────
 .top-navbar {
   position: sticky;
   top: 0;
@@ -8,9 +18,9 @@
   gap: 1rem;
   padding: 0.65rem 0.9rem;
   margin: 12px 12px 16px;
-  border: 1px solid rgba(17, 18, 26, 0.14);
+  border: 1px solid $border;
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.92);
+  background: $bg-elevated;
   backdrop-filter: blur(6px);
 
   @media (max-width: 700px) {
@@ -18,10 +28,19 @@
        En mobile lo anulamos para que el bottom-sheet del selector se
        posicione correctamente relativo al viewport. */
     backdrop-filter: none;
-    background: rgba(255, 255, 255, 0.97);
+    background: $bg-surface;
+    margin: 0;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    padding: 0.55rem 0.75rem;
   }
 }
 
+// ─── Left slot ────────────────────────────────────────────────────────────────
 .top-navbar-left {
   display: flex;
   align-items: center;
@@ -31,44 +50,51 @@
 .top-navbar-label {
   font-size: 0.85rem;
   font-weight: 600;
-  color: #475569;
+  color: $text-muted;
 }
 
-.top-navbar-select {
-  min-width: 210px;
-  border: 1px solid #d0d7e2;
-  border-radius: 10px;
-  padding: 0.5rem 0.75rem;
-  background: #ffffff;
-  color: #1f2937;
-  outline: none;
-
-  &:focus {
-    border-color: var(--focus-background);
-    box-shadow: 0 0 0 3px rgba(94, 99, 255, 0.2);
-  }
-}
-
+// ─── Actions ──────────────────────────────────────────────────────────────────
 .top-navbar-actions {
   display: flex;
   align-items: center;
   gap: 0.65rem;
 }
 
+// ─── Icon buttons ─────────────────────────────────────────────────────────────
 .btn-mini-fab {
   width: 40px;
   height: 40px;
-  background-color: #d7e3ff;
+  background: $hover-bg;
+  border: 1px solid $border;
   border-radius: 12px;
-  color: #00458f;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, .18);
-  border: unset;
+  color: $text;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  transition: background 0.18s, border-color 0.18s, color 0.18s;
+
+  mat-icon {
+    font-size: 22px;
+    line-height: 22px;
+    width: 22px;
+    height: 22px;
+    color: inherit;
+  }
+
+  &:hover {
+    background: rgba(0, 191, 165, 0.12);
+    border-color: rgba(0, 191, 165, 0.40);
+    color: $brand;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $brand;
+    outline-offset: 2px;
+  }
 }
 
+// ─── Material badge overrides ─────────────────────────────────────────────────
 :host ::ng-deep .btn-mini-fab mat-icon .mat-badge-content {
   min-width: 20px !important;
   height: 20px !important;
@@ -80,6 +106,7 @@
   font-family: Roboto, "Helvetica Neue", sans-serif !important;
   color: #fff !important;
   letter-spacing: 0 !important;
+  background-color: #e53935 !important;
 }
 
 :host ::ng-deep .btn-mini-fab.badge-pulse .mat-badge-content {
@@ -87,32 +114,13 @@
 }
 
 @keyframes notificationBadgePulse {
-  0% {
-    transform: scale(1);
-  }
-
-  45% {
-    transform: scale(1.24);
-  }
-
-  100% {
-    transform: scale(1);
-  }
+  0%   { transform: scale(1);    }
+  45%  { transform: scale(1.24); }
+  100% { transform: scale(1);    }
 }
 
+// ─── Mobile ───────────────────────────────────────────────────────────────────
 @media (max-width: 700px) {
-  .top-navbar {
-    top: 0;
-    margin: 0;
-    border-radius: 0;
-    border-left: none;
-    border-right: none;
-    border-top: none;
-    gap: 0.75rem;
-    flex-wrap: wrap;
-    padding: 0.55rem 0.75rem;
-  }
-
   .top-navbar-left,
   .top-navbar-actions {
     width: 100%;
@@ -121,10 +129,5 @@
     align-items: center;
     flex-wrap: nowrap;
     flex-direction: row;
-  }
-
-  .top-navbar-select {
-    width: 100%;
-    min-width: 0;
   }
 }

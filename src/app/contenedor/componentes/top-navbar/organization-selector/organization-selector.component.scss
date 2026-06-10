@@ -1,3 +1,26 @@
 :host {
   display: block;
 }
+
+.org-selector__create-cta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border: 1px dashed var(--color-border, rgba(255,255,255,0.20));
+  border-radius: 8px;
+  background: transparent;
+  color: var(--color-brand-primary, #00bfa5);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s, border-color 0.2s;
+
+  .material-icons { font-size: 18px; }
+
+  &:hover {
+    background: color-mix(in srgb, var(--color-brand-primary, #00bfa5) 10%, transparent);
+    border-color: var(--color-brand-primary, #00bfa5);
+  }
+}

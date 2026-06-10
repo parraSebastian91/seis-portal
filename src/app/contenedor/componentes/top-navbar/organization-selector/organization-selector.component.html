@@ -1,9 +1,21 @@
-<app-searchable-card-select
-  [items]="items"
-  [selectedId]="selectedId"
-  placeholder="Selecciona una organización"
-  searchPlaceholder="Buscar organización..."
-  icon="business"
-  (selectionChange)="onSelectionChange($event)"
-  (profileClick)="onProfileClick($event)"
-/>
+@if (hasOrgs) {
+  <app-searchable-card-select
+    [items]="items"
+    [selectedId]="selectedId"
+    placeholder="Selecciona una organización"
+    searchPlaceholder="Buscar organización..."
+    icon="business"
+    (selectionChange)="onSelectionChange($event)"
+    (profileClick)="onProfileClick($event)"
+  />
+} @else {
+  <button
+    type="button"
+    class="org-selector__create-cta"
+    (click)="onCreateOrg()"
+    aria-label="Crear organización"
+  >
+    <span class="material-icons" aria-hidden="true">add_business</span>
+    Configura tu organización
+  </button>
+}

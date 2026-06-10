@@ -21,6 +21,8 @@ export class MenuComponent implements OnInit, OnDestroy {
   flyoutIndex: number | null = null;
   /** Mensaje de error transitorio para EB-04 (logout fallido). */
   logoutError: string | null = null;
+  /** Toggle del dropdown de usuario. */
+  userMenuOpen = false;
 
   readonly displayName!: Signal<string>;
   readonly email!: Signal<string>;
@@ -75,6 +77,9 @@ export class MenuComponent implements OnInit, OnDestroy {
   }
 
   toggleSidebar(): void {
+    if(this.userMenuOpen) {
+      this.userMenuOpen = false;
+    }
     this.layoutStateService.toggleSidebarState();
     this.closeAllSubMenus();
     this.flyoutIndex = null;
@@ -124,12 +129,28 @@ export class MenuComponent implements OnInit, OnDestroy {
     if (!sidebar.contains(target)) {
       this.closeAllSubMenus();
       this.flyoutIndex = null;
+      this.userMenuOpen = false;
     }
   }
 
   goTo(ruta: string): void {
     this.flyoutIndex = null;
+    this.userMenuOpen = false;
     this._router.navigate([ruta], { relativeTo: this.activatedRoute });
+  }
+
+  toggleUserMenu(event: MouseEvent): void {
+    event.stopPropagation();
+    if (this.sidebarClosed) {
+      this.toggleSidebar();
+    }
+    setTimeout(() => {
+      this.userMenuOpen = !this.userMenuOpen;
+    }, 250);
+  }
+
+  closeUserMenu(): void {
+    this.userMenuOpen = false;
   }
 
   /** Devuelve true si el ítem de nivel 1 o alguno de sus subniveles está activo. */

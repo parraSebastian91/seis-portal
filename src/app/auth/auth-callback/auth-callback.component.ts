@@ -2,7 +2,7 @@ import { Component, Inject, OnDestroy, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
-import { NotificationSocketService, SessionService, User, UserImageSet, UserOrgProfileState, UserProfileService, UserStateService } from 'shared-utils';
+import { NotificationSocketService, SessionService, User, UserImageSet, UserOrgProfileState, UserProfileService, UserStateService, userOrgProfile } from 'shared-utils';
 import { ConfigService } from '../../service/config.service';
 import { getRoleRoute } from '../../guards/no-auth.guard';
 import { environment } from '../../../environments/environment.development';
@@ -75,8 +75,9 @@ export class AuthCallbackComponent implements OnInit, OnDestroy {
     const codeVerifier = sessionStorage.getItem('pkce_verifier');
     const base = this.config.getApiBase();
 
+    // ── Paso 2: intercambio PKCE ──────────────────────────────────────────────
+    // ms-auth establece las cookies auth.session + auth.refresh
     try {
-      // Paso 2: intercambio PKCE — ms-auth establece las cookies auth.session + auth.refresh
       await firstValueFrom(
         this.http.post<CallbackApiResponse>(`${base}/api/auth/security/callback`, {
           code,
@@ -85,100 +86,138 @@ export class AuthCallbackComponent implements OnInit, OnDestroy {
           typeDevice: this.detectDeviceType(),
         }),
       );
-      } catch {
-      if (this.timeoutId) {
-        clearTimeout(this.timeoutId);
-        this.timeoutId = null;
-      }
+    } catch {
+      if (this.timeoutId) { clearTimeout(this.timeoutId); this.timeoutId = null; }
       this.loading = false;
       this.errorMsg = 'El enlace de acceso ha expirado. Inicia sesión nuevamente.';
       setTimeout(() => this.goToLogin(), 3_000);
+      return; // stop — do not continue without a valid session cookie
     }
 
-
-      const [portalResult, userImageResult, userProfile, userOrganizationProfile] = await Promise.allSettled([
-        this.sesionService.getPortalData(),
-        this.userProfileService.getUserImage(),
-        this.userProfileService.getUserProfile(),
-        this.userProfileService.getUserOrganizationProfile(),
-      ]);
-
-      if (portalResult.status === 'fulfilled' && portalResult.value) {
-        const sidebarMenus = portalResult.value.sistemas;
-        this.userStateService.patch({
-          sidebarMenus: sidebarMenus.map((sistema: Sistema) => ({
-            icono: sistema.icono || 'apps',
-            nombre: sistema.nombre,
-            ruta: sistema.modulos.length === 0 ? `${sistema.ruta.toLowerCase()}` : undefined,
-            subMenus: sistema.modulos.length > 0 ? sistema.modulos.map((menu: any) => (
-              {
-                icono: menu.icono || 'menu',
-                nombre: menu.nombre,
-                ruta: `${sistema.ruta.toLowerCase()}/${menu.ruta.toLowerCase()}`
-              })
-            ) : undefined
-          }))
-        });
-      }
-      if (userImageResult.status === 'fulfilled' && userImageResult.value) {
-        if (userImageResult.value.avatar?.sm) {
-          const userImageSet: UserImageSet = {
-            small: userImageResult.value.avatar.sm.path,
-            medium: userImageResult.value.avatar.md.path,
-            large: userImageResult.value.avatar.lg.path
-          };
-          this.userStateService.setAvatar(userImageSet);
-        }
-      }
-
-      if (userProfile.status === 'fulfilled' && userProfile.value) {
-        console.log('User Profile:', userProfile.value);
+    // ── Paso 2.5: hidratar SessionService ────────────────────────────────────
+    // We must call session.setSession() HERE, before any navigation, so that
+    // authGuard sees isAuthenticated() === true immediately when it runs on
+    // the target route (e.g. /sin-organizacion). Without this, the guard falls
+    // through to tryRestore(), which may race with the fresh PKCE cookie.
+    let fetchedUserProfile: Awaited<ReturnType<typeof this.userProfileService.getUserProfile>> | null = null;
+    try {
+      fetchedUserProfile = await this.userProfileService.getUserProfile();
+      if (fetchedUserProfile) {
+        const user: import('shared-utils').User = {
+          id: fetchedUserProfile.usuarioUUID,
+          username: fetchedUserProfile.username,
+          correo: fetchedUserProfile.datosContacto?.correo ?? '',
+          nombre: fetchedUserProfile.nombre?.nombres ?? fetchedUserProfile.nombreCompleto ?? '',
+          apellido: fetchedUserProfile.nombre?.apellidoPaterno ?? '',
+          rol: 'USR_STD',
+        };
+        this.session.setSession(user, null);
         this.userStateService.setBasicInfo(
-          userProfile.value.usuarioUUID,
-          userProfile.value.username,
-          userProfile.value.nombreCompleto,
-          userProfile.value.datosContacto.correo,
-          ''
-        );
-        this.notificationSocketService.connect(
-          userProfile.value.username,
-          this.resolveSocketUrl()
+          fetchedUserProfile.usuarioUUID,
+          fetchedUserProfile.username,
+          fetchedUserProfile.nombreCompleto,
+          fetchedUserProfile.datosContacto?.correo ?? '',
+          'USR_STD'
         );
       }
+    } catch {
+      // Profile unreachable — abort and let the user retry from login.
+      if (this.timeoutId) { clearTimeout(this.timeoutId); this.timeoutId = null; }
+      this.loading = false;
+      this.errorMsg = 'No se pudo cargar tu perfil. Intenta iniciar sesión nuevamente.';
+      setTimeout(() => this.goToLogin(), 3_000);
+      return;
+    }
 
-      if (userOrganizationProfile.status === 'fulfilled' && userOrganizationProfile.value) {
-        console.log('User Organization Profile:', userOrganizationProfile.value);
-        const organizaciones = userOrganizationProfile.value.organizaciones;
-        const userOrgProfile: UserOrgProfileState[] = organizaciones.length > 0 ? organizaciones.map(org => ({
-          razonSocial: org.razon_social,
-          uuid: org.organizacion_uuid
-        })) : [{ razonSocial: 'Particular', uuid: 'particular' }];
+    // ── Paso 3: verificar organización ───────────────────────────────────────
+    // Check BEFORE loading the rest of the profile data so we can short-circuit
+    // to the org-creation wizard without unnecessary API calls.
+    let orgProfile: userOrgProfile | null = null;
+    try {
+      orgProfile = await this.userProfileService.getUserOrganizationProfile();
+    } catch {
+      // Cannot determine org status — treat as no-org (safe default)
+      orgProfile = null;
+    }
 
-        this.userStateService.setOrganizationProfile(userOrgProfile);
+    const tieneOrganizacion =
+      orgProfile !== null && orgProfile.organizaciones.length > 0;
+
+    // TODO: when the backend exposes `tipo_organizacion` on each org entry,
+    // read it here: orgProfile.organizaciones[0].tipo  (e.g. 'CEDENTE' | 'FINANCIERA' | 'BROKER')
+
+    if (!tieneOrganizacion) {
+      // User has no org yet → send to the org-creation wizard.
+      // hasOrgGuard will also enforce this, but we redirect explicitly to avoid
+      // an extra navigation cycle.
+      if (this.timeoutId) { clearTimeout(this.timeoutId); this.timeoutId = null; }
+      this.router.navigate(['/sin-organizacion']);
+      return;
+    }
+
+    // ── Paso 4: cargar datos del portal en paralelo ───────────────────────────
+    const [portalResult, userImageResult, userOrganizationProfile] = await Promise.allSettled([
+      this.sesionService.getPortalData(),
+      this.userProfileService.getUserImage(),
+      Promise.resolve(orgProfile), // already fetched in Paso 3 — reuse
+    ]);
+
+    if (portalResult.status === 'fulfilled' && portalResult.value) {
+      const sidebarMenus = portalResult.value.sistemas;
+      this.userStateService.patch({
+        sidebarMenus: sidebarMenus.map((sistema: Sistema) => ({
+          icono: sistema.icono || 'apps',
+          nombre: sistema.nombre,
+          ruta: sistema.modulos.length === 0 ? `${sistema.ruta.toLowerCase()}` : undefined,
+          subMenus: sistema.modulos.length > 0 ? sistema.modulos.map((menu: any) => ({
+            icono: menu.icono || 'menu',
+            nombre: menu.nombre,
+            ruta: `${sistema.ruta.toLowerCase()}/${menu.ruta.toLowerCase()}`
+          })) : undefined
+        }))
+      });
+    }
+
+    if (userImageResult.status === 'fulfilled' && userImageResult.value) {
+      if (userImageResult.value.avatar?.sm) {
+        const userImageSet: UserImageSet = {
+          small: userImageResult.value.avatar.sm.path,
+          medium: userImageResult.value.avatar.md.path,
+          large: userImageResult.value.avatar.lg.path
+        };
+        this.userStateService.setAvatar(userImageSet);
       }
+    }
 
-      setTimeout(() => {
-        this.router.navigate(['/contenedor/pages']);
-      }, 3000);
-      // Paso 3: obtener perfil con la cookie recién seteada
-      // const profileRes = await firstValueFrom(
-      //   this.http.get<ProfileApiResponse>(`${base}/api/bff/usuario/profile`),
-      // );
+    // userProfile was already loaded in Paso 2.5 — apply remaining state updates
+    if (fetchedUserProfile) {
+      this.userStateService.setBasicInfo(
+        fetchedUserProfile.usuarioUUID,
+        fetchedUserProfile.username,
+        fetchedUserProfile.nombreCompleto,
+        fetchedUserProfile.datosContacto?.correo ?? '',
+        ''
+      );
+      this.notificationSocketService.connect(
+        fetchedUserProfile.username,
+        this.resolveSocketUrl()
+      );
+    }
 
-      // const user = profileRes.data?.[0];
-      // if (!user) throw new Error('NO_PROFILE');
+    if (userOrganizationProfile.status === 'fulfilled' && userOrganizationProfile.value) {
+      const organizaciones = (userOrganizationProfile.value as userOrgProfile).organizaciones;
+      const userOrgProfileState: UserOrgProfileState[] = organizaciones.map(org => ({
+        razonSocial: org.razon_social,
+        uuid: org.organizacion_uuid,
+      }));
+      this.userStateService.setOrganizationProfile(userOrgProfileState);
+    }
 
-      // // Paso 4: establecer sesión en memoria
-      // this.session.setSession(user, null);
-
-      // // Paso 5: redirect según rol
-      // if (this.timeoutId) {
-      //   clearTimeout(this.timeoutId);
-      //   this.timeoutId = null;
-      // }
-      // const target = getRoleRoute(user.rol);
-      // this.router.navigate([target]);
-    
+    // ── Paso 5: navegar al contenedor ─────────────────────────────────────────
+    if (this.timeoutId) { clearTimeout(this.timeoutId); this.timeoutId = null; }
+    setTimeout(() => {
+      this.router.navigate(['/contenedor/pages']);
+    }, 3_000);
   }
 
   goToLogin(): void {

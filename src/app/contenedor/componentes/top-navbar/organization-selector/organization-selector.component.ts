@@ -1,12 +1,13 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
 import { SearchableCardItem, SearchableCardSelectComponent, UserStateService } from 'shared-utils';
 
 @Component({
   selector: 'app-organization-selector',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [SearchableCardSelectComponent],
+  imports: [CommonModule, SearchableCardSelectComponent],
   templateUrl: './organization-selector.component.html',
   styleUrl: './organization-selector.component.scss',
 })
@@ -15,11 +16,17 @@ export class OrganizationSelectorComponent implements OnInit {
   private readonly router = inject(Router);
 
   get items(): SearchableCardItem[] {
-    return this.userStateService.organizationProfile().map(org => ({
-      id: org.uuid,
-      name: org.razonSocial,
-      meta: org.rut ?? undefined,
-    }));
+    return this.userStateService.organizationProfile()
+      .filter(org => !!org.uuid)
+      .map(org => ({
+        id: org.uuid,
+        name: org.razonSocial,
+        meta: org.rut ?? undefined,
+      }));
+  }
+
+  get hasOrgs(): boolean {
+    return this.items.length > 0;
   }
 
   get selectedId(): string | null {
@@ -42,5 +49,9 @@ export class OrganizationSelectorComponent implements OnInit {
 
   onProfileClick(item: SearchableCardItem): void {
     this.router.navigate(['/contenedor/pages/organizaciones', item.id]);
+  }
+
+  onCreateOrg(): void {
+    this.router.navigateByUrl('/contenedor/pages/organizaciones/nueva');
   }
 }
