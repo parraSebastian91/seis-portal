@@ -91,7 +91,7 @@ export class InicioComponent implements OnInit, OnDestroy {
           userProfile.value.username,
           userProfile.value.nombreCompleto,
           userProfile.value.datosContacto.correo,
-          ''
+          userProfile.value.roles ?? []
         );
         this.notificationSocketService.connect(
           userProfile.value.username,

@@ -9,6 +9,14 @@ body {
   overflow: hidden;
 }
 
+// ── Layout tokens ─────────────────────────────────────────────────────────────
+// --topbar-height  : altura total del top-navbar (barra sticky dentro de <main>)
+// --main-content-height : alto disponible debajo del top-navbar dentro de <main>
+:root {
+  --topbar-height: 64px;
+  --main-content-height: calc(100dvh - var(--topbar-height));
+}
+
 .body {
   display: grid;
   grid-template-columns: auto 1fr;

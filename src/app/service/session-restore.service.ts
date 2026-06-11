@@ -13,6 +13,7 @@ interface BffProfileData {
   nombreCompleto: string;
   nombre?: { nombres: string; apellidoPaterno: string; apellidoMaterno?: string };
   datosContacto?: { correo?: string };
+  roles?: string[];
 }
 
 interface ProfileApiResponse {
@@ -84,7 +85,7 @@ export class SessionRestoreService {
       profile.username,
       profile.nombreCompleto,
       profile.datosContacto?.correo ?? '',
-      ''
+      profile.roles ?? []
     );
 
     // 3. Cargar datos adicionales en paralelo (org, menus, avatar)

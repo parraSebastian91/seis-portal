@@ -109,7 +109,9 @@ export class AuthCallbackComponent implements OnInit, OnDestroy {
           correo: fetchedUserProfile.datosContacto?.correo ?? '',
           nombre: fetchedUserProfile.nombre?.nombres ?? fetchedUserProfile.nombreCompleto ?? '',
           apellido: fetchedUserProfile.nombre?.apellidoPaterno ?? '',
-          rol: 'USR_STD',
+          rol: fetchedUserProfile.roles && fetchedUserProfile.roles.length > 0 ? fetchedUserProfile.roles[0] as import('shared-utils').UserRole
+            : 'USR_STD',
+          avatarUrl: fetchedUserProfile.assets?.avatar?.md?.path ?? '',
         };
         this.session.setSession(user, null);
         this.userStateService.setBasicInfo(
@@ -117,7 +119,7 @@ export class AuthCallbackComponent implements OnInit, OnDestroy {
           fetchedUserProfile.username,
           fetchedUserProfile.nombreCompleto,
           fetchedUserProfile.datosContacto?.correo ?? '',
-          'USR_STD'
+          fetchedUserProfile.roles ?? []
         );
       }
     } catch {
@@ -196,7 +198,7 @@ export class AuthCallbackComponent implements OnInit, OnDestroy {
         fetchedUserProfile.username,
         fetchedUserProfile.nombreCompleto,
         fetchedUserProfile.datosContacto?.correo ?? '',
-        ''
+        fetchedUserProfile.roles ?? []
       );
       this.notificationSocketService.connect(
         fetchedUserProfile.username,
