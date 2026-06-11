@@ -77,7 +77,7 @@ export class MenuComponent implements OnInit, OnDestroy {
   }
 
   toggleSidebar(): void {
-    if(this.userMenuOpen) {
+    if (this.userMenuOpen) {
       this.userMenuOpen = false;
     }
     this.layoutStateService.toggleSidebarState();
@@ -90,23 +90,26 @@ export class MenuComponent implements OnInit, OnDestroy {
 
     if (this.sidebarClosed || this.isMobile) {
       // En modo colapsado (desktop) o mobile: flyout en lugar de acordeón
-      this.flyoutIndex = this.flyoutIndex === index ? null : index;
+      this.layoutStateService.toggleSidebarState();
+       this.flyoutIndex = this.flyoutIndex === index ? null : index;
       return;
     }
 
-    const button = event.currentTarget as HTMLElement | null;
-    const sidebar = this.sidebar?.nativeElement;
-    if (!button || !sidebar) return;
+    setTimeout(() => {
+      const button = event.currentTarget as HTMLElement | null;
+      const sidebar = this.sidebar?.nativeElement;
+      if (!button || !sidebar) return;
 
-    const nextElement = button.nextElementSibling as HTMLElement | null;
-    if (!nextElement) return;
+      const nextElement = button.nextElementSibling as HTMLElement | null;
+      if (!nextElement) return;
 
-    if (!nextElement.classList.contains('show')) {
-      this.closeAllSubMenus();
-    }
+      if (!nextElement.classList.contains('show')) {
+        this.closeAllSubMenus();
+      }
 
-    nextElement.classList.toggle('show');
-    button.classList.toggle('rotate');
+      nextElement.classList.toggle('show');
+      button.classList.toggle('rotate');
+    }, 200);
   }
 
   closeAllSubMenus(): void {
