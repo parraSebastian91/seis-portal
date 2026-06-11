@@ -88,15 +88,15 @@ export class MenuComponent implements OnInit, OnDestroy {
   toggleSubMenu(event: Event, index: number): void {
     event.stopPropagation();
 
-    if (this.sidebarClosed || this.isMobile) {
-      // En modo colapsado (desktop) o mobile: flyout en lugar de acordeón
-      this.layoutStateService.toggleSidebarState();
-       this.flyoutIndex = this.flyoutIndex === index ? null : index;
+    if (this.isMobile) {
+      // Mobile: flyout en lugar de acordeón
+      this.flyoutIndex = this.flyoutIndex === index ? null : index;
       return;
     }
 
-    setTimeout(() => {
-      const button = event.currentTarget as HTMLElement | null;
+    const button = event.currentTarget as HTMLElement | null;
+
+    const openSubMenu = () => {
       const sidebar = this.sidebar?.nativeElement;
       if (!button || !sidebar) return;
 
@@ -109,7 +109,16 @@ export class MenuComponent implements OnInit, OnDestroy {
 
       nextElement.classList.toggle('show');
       button.classList.toggle('rotate');
-    }, 200);
+    };
+
+    if (this.sidebarClosed) {
+      // Sidebar cerrado: abrirlo primero y luego desplegar tras la animación
+      this.layoutStateService.toggleSidebarState();
+      setTimeout(openSubMenu, 200);
+    } else {
+      // Sidebar ya abierto: desplegar inmediatamente
+      openSubMenu();
+    }
   }
 
   closeAllSubMenus(): void {
