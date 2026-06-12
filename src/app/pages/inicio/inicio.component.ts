@@ -1,7 +1,7 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { SesionService } from '../../service/sesion.service';
 import { Router } from '@angular/router';
-import { UserImageSet, UserOrgProfileState, UserProfileService, UserStateService, NotificationSocketService } from 'shared-utils';
+import { UserImageSet, UserOrgProfileState, UserProfileService, UserStateService, NotificationSocketService, LOGIN_APP_URL } from 'shared-utils';
 import { Sistema } from '../../service/interfaces/SystemNavigator.dto';
 import { environment } from '../../../environments/environment';
 
@@ -42,6 +42,7 @@ export class InicioComponent implements OnInit, OnDestroy {
     private userProfileService: UserProfileService,
     private userStateService: UserStateService,
     @Inject(NotificationSocketService) private notificationSocketService: NotificationSocketService,
+    @Inject(LOGIN_APP_URL) private loginAppUrl: string,
     private router: Router
   ) { }
 
@@ -117,7 +118,7 @@ export class InicioComponent implements OnInit, OnDestroy {
       console.error('Error during initialization:', error);
       this.setMessage('Error durante la inicialización. Redirigiendo a login externo...', false);
       setTimeout(() => {
-        window.location.href = 'http://localhost:8000/pages/login';
+        window.location.href = this.loginAppUrl;
       }, 3000);
     }
 

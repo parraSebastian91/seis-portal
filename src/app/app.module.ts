@@ -15,7 +15,9 @@ import {
   authRefreshInterceptor,
   errorInterceptor,
   CorrelationIdInterceptor,
+  LOGIN_APP_URL,
 } from 'shared-utils';
+import { environment } from '../environments/environment';
 
 @NgModule({
   declarations: [
@@ -43,6 +45,12 @@ import {
       provide: HTTP_INTERCEPTORS,
       useClass: CorrelationIdInterceptor,
       multi: true
+    },
+    // Proveer la URL del login app con el valor correcto del entorno.
+    // Sin esto, el token usa window.location.origin (el portal mismo) → loop infinito al expirar sesión.
+    {
+      provide: LOGIN_APP_URL,
+      useValue: environment.appLogin,
     },
   ],
   bootstrap: [AppComponent],

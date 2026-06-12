@@ -1,7 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpStatusCode } from '@angular/common/http';
 import { Observable, from, of } from 'rxjs';
-import { catchError, finalize, switchMap } from 'rxjs/operators';
+import { catchError, finalize, shareReplay, switchMap } from 'rxjs/operators';
 import { SessionService, User, UserStateService, UserProfileService, UserImageSet, UserOrgProfileState } from 'shared-utils';
 import { ConfigService } from './config.service';
 import { SesionService } from './sesion.service';
@@ -33,17 +33,28 @@ export class SessionRestoreService {
   readonly restoring = signal(false);
 
   /**
+   * Observable compartido mientras hay un restore en curso.
+   * Evita doble-request si dos guards disparan tryRestore() en paralelo.
+   */
+  private restore$: Observable<boolean> | null = null;
+
+  /**
    * Intenta restaurar la sesión consultando el perfil del usuario.
    * La cookie auth.session puede seguir activa tras un F5; si es así
    * el backend responde 200 y la sesión queda restaurada.
    * También hidrata UserStateService (displayName, email, avatar, sidebarMenus,
    * organizationProfile) para que el menu y hasOrgGuard funcionen correctamente.
+   *
+   * Llamadas concurrentes comparten el mismo Observable (shareReplay) y no
+   * generan requests duplicados.
    */
   tryRestore(): Observable<boolean> {
+    if (this.restore$) return this.restore$;
+
     this.restoring.set(true);
     const url = `${this.config.getApiBase()}/api/bff/usuario/profile`;
 
-    return this.http.get<ProfileApiResponse>(url).pipe(
+    this.restore$ = this.http.get<ProfileApiResponse>(url).pipe(
       switchMap(res => from(this._hydrateFromProfile(res.data))),
       catchError((error: HttpErrorResponse) => {
         console.log('Error al intentar restaurar sesión:', error);
@@ -56,8 +67,14 @@ export class SessionRestoreService {
         console.log('Error de red o servidor, pero no confirmación de sesión inválida. Permitiendo navegación...');
         return of(true);
       }),
-      finalize(() => this.restoring.set(false)),
+      finalize(() => {
+        this.restoring.set(false);
+        this.restore$ = null;
+      }),
+      shareReplay(1),
     );
+
+    return this.restore$;
   }
 
   private async _hydrateFromProfile(profile: BffProfileData): Promise<boolean> {
@@ -68,7 +85,7 @@ export class SessionRestoreService {
 
     console.log('Restaurando sesión y datos de usuario...');
 
-    // 1. Hidratar SessionService (para que isAuthenticated() devuelva true)
+    // 1. Construir el objeto de usuario (sin autenticar todavía)
     const user: User = {
       id: profile.usuarioUUID,
       username: profile.username,
@@ -77,9 +94,8 @@ export class SessionRestoreService {
       apellido: profile.nombre?.apellidoPaterno ?? '',
       rol: 'USR_STD',
     };
-    this.session.setSession(user, null);
 
-    // 2. Hidratar UserStateService con info básica inmediatamente
+    // 2. Hidratar UserStateService con info básica (sin marcar sesión como autenticada todavía)
     this.userState.setBasicInfo(
       profile.usuarioUUID,
       profile.username,
@@ -88,7 +104,11 @@ export class SessionRestoreService {
       profile.roles ?? []
     );
 
-    // 3. Cargar datos adicionales en paralelo (org, menus, avatar)
+    // 3. Cargar org, menus y avatar en paralelo ANTES de marcar la sesión como autenticada.
+    // Esto es crítico: setSession() (isAuthenticated = true) debe ejecutarse DESPUÉS de que
+    // setOrganizationProfile() haya sido llamado. Si se hiciera antes, cualquier re-evaluación
+    // de guards durante el await (p.ej. por re-montaje del router-outlet) encontraría
+    // isAuthenticated=true pero organizationProfile vacío → false-redirect a /sin-organizacion.
     const [orgResult, portalResult, imageResult] = await Promise.allSettled([
       this.userProfileService.getUserOrganizationProfile(),
       this.sesionService.getPortalData(),
@@ -101,6 +121,11 @@ export class SessionRestoreService {
         ? orgs.map(org => ({ razonSocial: org.razon_social, uuid: org.organizacion_uuid }))
         : [{ razonSocial: 'Particular', uuid: 'particular' }];
       this.userState.setOrganizationProfile(orgProfiles);
+    } else {
+      // La carga de org falló (error de red o servidor), no significa que el usuario
+      // no tenga org. Usamos el fallback 'particular' para que hasOrgGuard no
+      // redirija falsamente a /sin-organizacion.
+      this.userState.setOrganizationProfile([{ razonSocial: 'Particular', uuid: 'particular' }]);
     }
 
     if (portalResult.status === 'fulfilled' && portalResult.value) {
@@ -130,6 +155,10 @@ export class SessionRestoreService {
       };
       this.userState.setAvatar(imageSet);
     }
+
+    // 4. Marcar la sesión como autenticada DESPUÉS de que todos los datos estén listos.
+    // Garantiza que hasOrgGuard nunca vea isAuthenticated=true con org vacío.
+    this.session.setSession(user, null);
 
     console.log('Sesión y datos de usuario restaurados correctamente.');
     return true;
