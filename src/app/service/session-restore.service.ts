@@ -92,7 +92,9 @@ export class SessionRestoreService {
       correo: profile.datosContacto?.correo ?? '',
       nombre: profile.nombre?.nombres ?? profile.nombreCompleto ?? '',
       apellido: profile.nombre?.apellidoPaterno ?? '',
-      rol: 'USR_STD',
+      rol: profile.roles && profile.roles.length > 0
+        ? profile.roles[0] as User['rol']
+        : 'USR_STD',
     };
 
     // 2. Hidratar UserStateService con info básica (sin marcar sesión como autenticada todavía)
