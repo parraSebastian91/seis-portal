@@ -5,7 +5,7 @@ import { firstValueFrom } from 'rxjs';
 import { NotificationSocketService, SessionService, User, UserImageSet, UserOrgProfileState, UserProfileService, UserStateService, userOrgProfile } from 'shared-utils';
 import { ConfigService } from '../../service/config.service';
 import { getRoleRoute } from '../../guards/no-auth.guard';
-import { environment } from '../../../environments/environment.development';
+import { environment } from '../../../environments/environment';
 import { SesionService } from '../../service/sesion.service';
 import { Sistema } from '../../service/interfaces/SystemNavigator.dto';
 
@@ -72,7 +72,7 @@ export class AuthCallbackComponent implements OnInit, OnDestroy {
       this.goToLogin();
       return;
     }
-    const codeVerifier = sessionStorage.getItem('pkce_verifier');
+    const codeVerifier = this.resolveCodeVerifier(cid);
     const base = this.config.getApiBase();
 
     // ── Paso 2: intercambio PKCE ──────────────────────────────────────────────
@@ -224,6 +224,34 @@ export class AuthCallbackComponent implements OnInit, OnDestroy {
 
   goToLogin(): void {
     this.router.navigate(['/auth/redirect-to-login']);
+  }
+
+  /**
+   * Resuelve el code_verifier PKCE:
+   * 1. sessionStorage (misma origin — dev en localhost)
+   * 2. Cookie seis_pkce_${cid} (puente cross-port para LAN/HTTP)
+   */
+  private resolveCodeVerifier(correlationId: string | undefined): string | null {
+    const fromStorage = sessionStorage.getItem('pkce_verifier');
+    if (fromStorage) return fromStorage;
+
+    if (!correlationId) return null;
+
+    const cookieName = `seis_pkce_${correlationId}`;
+    const entry = document.cookie
+      .split(';')
+      .map(c => c.trim())
+      .find(c => c.startsWith(cookieName + '='));
+
+    if (!entry) return null;
+
+    try {
+      const raw = entry.slice(cookieName.length + 1);
+      const payload = JSON.parse(decodeURIComponent(raw));
+      return payload.v ?? null;
+    } catch {
+      return null;
+    }
   }
 
   private detectDeviceType(): string {
