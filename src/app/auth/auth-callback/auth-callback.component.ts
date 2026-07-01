@@ -2,7 +2,7 @@ import { Component, Inject, OnDestroy, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
-import { NotificationSocketService, SessionService, User, UserImageSet, UserOrgProfileState, UserProfileService, UserStateService, userOrgProfile } from 'shared-utils';
+import { NotificationSocketService, SessionService, User, UserImageSet, UserOrgProfileState, UserProfileService, UserStateService, userOrgProfile, SSEService } from 'shared-utils';
 import { ConfigService } from '../../service/config.service';
 import { getRoleRoute } from '../../guards/no-auth.guard';
 import { environment } from '../../../environments/environment';
@@ -45,7 +45,8 @@ export class AuthCallbackComponent implements OnInit, OnDestroy {
     private http: HttpClient,
     private route: ActivatedRoute,
     private router: Router,
-    private config: ConfigService
+    private config: ConfigService,
+    private _SSEService: SSEService
   ) {
 
   }
@@ -73,7 +74,7 @@ export class AuthCallbackComponent implements OnInit, OnDestroy {
       return;
     }
     const codeVerifier = this.resolveCodeVerifier(cid);
-    const base = this.config.getApiBase();
+    const base = environment.getBaseUrl();
 
     // ── Paso 2: intercambio PKCE ──────────────────────────────────────────────
     // ms-auth establece las cookies auth.session + auth.refresh

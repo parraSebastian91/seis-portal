@@ -183,7 +183,7 @@ export class MenuComponent implements OnInit, OnDestroy {
     this.logoutError = null;
     try {
       await this._sesionService.logout();
-      globalThis.location.href = environment.appLogin;
+      globalThis.location.href = `${environment.getBaseUrl()}${environment.appLogin}`;
     } catch {
       // EB-04: logout fallido — mostrar toast y mantener sesión activa
       this.logoutError = 'No se pudo cerrar la sesión. Intenta nuevamente.';

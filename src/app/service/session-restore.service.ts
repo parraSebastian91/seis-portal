@@ -6,6 +6,7 @@ import { SessionService, User, UserStateService, UserProfileService, UserImageSe
 import { ConfigService } from './config.service';
 import { SesionService } from './sesion.service';
 import { Sistema } from './interfaces/SystemNavigator.dto';
+import { environment } from '../../environments/environment';
 
 interface BffProfileData {
   usuarioUUID: string;
@@ -52,7 +53,7 @@ export class SessionRestoreService {
     if (this.restore$) return this.restore$;
 
     this.restoring.set(true);
-    const url = `${this.config.getApiBase()}/api/bff/usuario/profile`;
+    const url = `${environment.getBaseUrl()}/api/bff/usuario/profile`;
 
     this.restore$ = this.http.get<ProfileApiResponse>(url).pipe(
       switchMap(res => from(this._hydrateFromProfile(res.data))),

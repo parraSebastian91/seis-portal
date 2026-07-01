@@ -50,7 +50,7 @@ import { environment } from '../environments/environment';
     // Sin esto, el token usa window.location.origin (el portal mismo) → loop infinito al expirar sesión.
     {
       provide: LOGIN_APP_URL,
-      useValue: environment.appLogin,
+      useValue: `${environment.getBaseUrl()}${environment.appLogin}`,
     },
   ],
   bootstrap: [AppComponent],
