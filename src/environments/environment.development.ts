@@ -4,13 +4,16 @@ export const environment = {
   msAuth: '/api/auth/security',
   appLogin: '/pages/login',
 
+  /**
+   * URL base del gateway, inyectada en runtime via window.__env.API_BASE_URL.
+   * Sin ese valor: window.location.origin (NO un host:puerto fijo), para que
+   * las llamadas caigan en el propio origen y el proxyConfig del dev-server
+   * las reenvíe al gateway sin CORS.
+   */
   getBaseUrl(): string {
     const injected = (window as any).__env?.API_BASE_URL;
     if (injected) return injected.replace(/\/$/, '');
-    const protocol = (window as any).__env?.HOST_PROTOCOL || 'http';
-    const host     = (window as any).__env?.HOST_LAN_IP    || 'localhost';
-    const port     = (window as any).__env?.KONG_PROXY_PORT || '8000';
-    return `${protocol}://${host}:${port}`;
+    return window.location.origin;
   },
 
   getEndpoint(path = ''): string {

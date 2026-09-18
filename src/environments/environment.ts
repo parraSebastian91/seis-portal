@@ -5,17 +5,15 @@ export const environment = {
     appLogin: '/pages/login',
 
     /**
-     * URL base de Kong inyectada en runtime via window.__env.API_BASE_URL (desde entrypoint.portal.sh).
-     * Ejemplo: http://192.168.3.10:8000
-     * Sin env.js ó en desarrollo local: fallback a localhost:8000.
+     * URL base del gateway, inyectada en runtime via window.__env.API_BASE_URL
+     * (desde entrypoint.portal.sh en Docker/prod).
+     * Sin ese valor: window.location.origin (NO un host:puerto fijo), para
+     * que las llamadas caigan en el propio origen sin CORS.
      */
     getBaseUrl(): string {
         const injected = (window as any).__env?.API_BASE_URL;
         if (injected) return injected.replace(/\/$/, '');
-        const protocol = (window as any).__env?.HOST_PROTOCOL || 'http';
-        const host     = (window as any).__env?.HOST_LAN_IP    || 'localhost';
-        const port     = (window as any).__env?.KONG_PROXY_PORT || '8000';
-        return `${protocol}://${host}:${port}`;
+        return window.location.origin;
     },
 
     getEndpoint(path = ''): string {
