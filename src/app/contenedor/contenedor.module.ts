@@ -19,7 +19,7 @@ import { NavbarComponent } from './componentes/navbar/navbar.component';
 import { TopNavbarComponent } from './componentes/top-navbar/top-navbar.component';
 import { ModalUploadObjectComponent } from './componentes/modal-upload-object/modal-upload-object.component';
 import { RouterModule } from '@angular/router';
-import { SearchableCardSelectComponent } from 'shared-utils';
+import { SearchableCardSelectComponent, IconComponent } from 'shared-utils';
 import { OrganizationSelectorComponent } from './componentes/top-navbar/organization-selector/organization-selector.component';
 import { NotificationsSidebarComponent } from './componentes/notifications-sidebar/notifications-sidebar.component';
 import { AppDrawerComponent } from './componentes/app-drawer/app-drawer.component';
@@ -45,6 +45,7 @@ import { AppDrawerComponent } from './componentes/app-drawer/app-drawer.componen
     ContenedoRoutingModule,
     PagesModule,
     SearchableCardSelectComponent,
+    IconComponent,
     OrganizationSelectorComponent,
     NotificationsSidebarComponent,
     AppDrawerComponent,

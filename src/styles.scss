@@ -9,26 +9,32 @@
 // =============================================================================
 // Legacy tokens — mantienen compatibilidad con componentes existentes
 // que aún usan --primary, --font-color, --background-menu, etc.
+//
+// Fase 1 del refactor de design system: estos NOMBRES se mantienen (40+
+// usos en seis-portal/ofertador-facturas/notifications-sidebar dependen de
+// ellos) pero sus VALORES ahora apuntan a los tokens reales de
+// shared-utils/_tokens.scss en vez de la paleta Material azul (#1976d2 y
+// compañía) que no tenía ninguna relación con la marca Factor. Migrar cada
+// consumidor a usar --color-* directamente queda para la Fase 2.
 // =============================================================================
 :root {
-  --primary: #1976d2;
-  --secondary: #114d8a;
-  --focus-background: #5e63ff;
-  --focus-font-color: #ffffff;
-  --font-color: #ffffff;
-  --accent:  #ff4081;
-  --warn:    #f44336;
-  --line-clr: #42434a;
-  --background-menu: #11121a;
-  --background-body: #11121a;
-  --background-menu-actions: #ebebeb;
-  --background-toolbar: #ffffff;
-  --on-primary: #ffffff;
+  --primary:   var(--color-brand-primary);
+  --secondary: var(--color-brand-primary-dim);
+  --focus-background: var(--color-brand-primary);    // hover/active en nav (navbar, notifications-sidebar)
+  --focus-font-color: var(--color-brand-on-primary);
+  --font-color: var(--color-text-primary);
+  --accent:  var(--color-brand-primary);
+  --line-clr: var(--color-border);
+  --background-menu: var(--color-bg-surface);
+  --background-body: var(--color-bg-base);
+  --background-menu-actions: var(--color-bg-elevated); // antes #ebebeb (gris claro) — no correspondía al tema dark
+  --on-primary: var(--color-brand-on-primary);
+  // --warn y --background-toolbar se quitan: 0 usos reales en todo el workspace.
 
   /* Mapear a variables de Angular Material (MDC) */
   --mdc-theme-primary: var(--primary);
   --mdc-theme-secondary: var(--accent);
-  --mdc-theme-surface: var(--background);
+  --mdc-theme-surface: var(--color-bg-surface);
   --mdc-theme-on-primary: var(--on-primary);
 
   /* Variables para Material Badge */

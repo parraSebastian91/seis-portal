@@ -14,7 +14,7 @@
 
         @if (sidebarMenus().length === 0) {
         <li class="menu-empty-state" aria-live="polite">
-            <mat-icon class="svg" aria-hidden="true">menu_open</mat-icon>
+            <app-icon class="svg" name="menu_open" aria-hidden="true" />
             @if (!sidebarClosed) {
             <span>Sin módulos disponibles</span>
             }
@@ -84,19 +84,19 @@
             </div>
             <button class="user-menu-btn" (click)="toggleUserMenu($event)" title="Opciones de usuario"
                 aria-label="Opciones de usuario" [attr.aria-expanded]="userMenuOpen">
-                <mat-icon aria-hidden="true">more_vert</mat-icon>
+                <app-icon name="more_vert" size="18" aria-hidden="true" />
             </button>
 
             @if (userMenuOpen) {
             <div class="user-dropdown" role="menu">
                 <button class="user-dropdown__item" role="menuitem"
                     (click)="goTo('/contenedor/pages/perfil'); closeUserMenu()">
-                    <mat-icon>account_circle</mat-icon>
+                    <app-icon name="account_circle" size="18" />
                     <span>Perfil</span>
                 </button>
                 <div class="user-dropdown__divider"></div>
                 <button class="user-dropdown__item user-dropdown__item--danger" role="menuitem" (click)="logout()">
-                    <mat-icon>logout</mat-icon>
+                    <app-icon name="logout" size="18" />
                     <span>Cerrar sesi&oacute;n</span>
                 </button>
             </div>

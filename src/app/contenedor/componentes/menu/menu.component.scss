@@ -316,8 +316,6 @@ $radius:      10px;
     transition: background 0.15s, color 0.15s;
 
     &:hover { background: $hover-bg; color: $text; }
-
-    mat-icon { font-size: 18px; width: 18px; height: 18px; }
 }
 
 // ── Custom user dropdown ──────────────────────────────────────
@@ -357,7 +355,7 @@ $radius:      10px;
 
     &:hover { background: $hover-bg; }
 
-    mat-icon { font-size: 18px; width: 18px; height: 18px; color: $text-muted; }
+    app-icon { color: $text-muted; }
 }
 
 .user-dropdown__divider {
@@ -368,7 +366,7 @@ $radius:      10px;
 
 .user-dropdown__item--danger {
     color: #ef9a9a;
-    mat-icon { color: #ef5350; }
+    app-icon { color: #ef5350; }
     &:hover { background: rgba(239,83,80,0.1); }
 }
 
