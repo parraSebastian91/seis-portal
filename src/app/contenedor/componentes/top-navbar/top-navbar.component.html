@@ -5,12 +5,12 @@
 
     <div class="top-navbar-actions">
         <button class="btn-mini-fab" (click)="onAccountClick()" aria-label="Ir al perfil">
-            <mat-icon aria-hidden="false">account_circle</mat-icon>
+            <app-icon name="account_circle" size="22" />
         </button>
-        <button class="btn-mini-fab" [class.badge-pulse]="badgePulse" (click)="onNotificationsClick()"
+        <button class="btn-mini-fab" (click)="onNotificationsClick()"
             [attr.aria-expanded]="notificationsPanelOpen" aria-label="Notificaciones">
-            <mat-icon aria-hidden="false" [matBadge]="notificationBadgeText" matBadgeColor="warn"
-                [matBadgeHidden]="!notificationBadgeText">notifications</mat-icon>
+            <app-icon name="notifications" size="22" />
+            <app-notification-badge [text]="notificationBadgeText" [pulse]="badgePulse" />
         </button>
     </div>
 </div>

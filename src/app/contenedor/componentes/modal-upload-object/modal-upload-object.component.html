@@ -4,7 +4,7 @@
     <header class="modal-header">
       <h2>{{ config.title }}</h2>
       <button type="button" class="btn-close" (click)="close()" aria-label="Cerrar">
-        <mat-icon>close</mat-icon>
+        <app-icon name="close" size="18" />
       </button>
     </header>
 
@@ -18,25 +18,25 @@
       (drop)="onDrop($event)"
     >
       <input type="file" [attr.accept]="config.accept" (change)="onFileSelected($event)" />
-      <mat-icon class="dropzone-icon">upload_file</mat-icon>
+      <app-icon class="dropzone-icon" name="upload_file" size="40" />
       <span>Arrastra tu archivo aquí o toca para seleccionarlo</span>
     </label>
 
     <div class="mobile-actions" *ngIf="isMobile">
       <label class="btn-mobile">
-        <mat-icon>photo_camera</mat-icon>
+        <app-icon name="photo_camera" size="18" />
         Tomar foto
         <input type="file" accept="image/*" capture="environment" (change)="onFileSelected($event)" />
       </label>
       <label class="btn-mobile">
-        <mat-icon>folder_open</mat-icon>
+        <app-icon name="folder_open" size="18" />
         Elegir archivo
         <input type="file" [attr.accept]="config.accept" (change)="onFileSelected($event)" />
       </label>
     </div>
 
     <p class="selected-file" [class.has-file]="!!selectedFile">
-      <mat-icon>{{ selectedFile ? 'check_circle' : 'info' }}</mat-icon>
+      <app-icon [name]="selectedFile ? 'check_circle' : 'info'" size="16" />
       {{ selectedFileName }}
     </p>
 

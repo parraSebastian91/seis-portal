@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { LoaderComponent, IconComponent } from 'shared-utils';
 
 import { AuthCallbackComponent } from './auth-callback/auth-callback.component';
 import { RedirectToLoginComponent } from './redirect-to-login/redirect-to-login.component';
@@ -26,7 +26,8 @@ const routes: Routes = [
   ],
   imports: [
     CommonModule,
-    MatProgressSpinnerModule,
+    LoaderComponent,
+    IconComponent,
     RouterModule.forChild(routes),
   ],
 })

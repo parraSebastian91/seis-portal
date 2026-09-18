@@ -2,13 +2,13 @@
 
   <!-- Estado: cargando -->
   <ng-container *ngIf="loading && !errorMsg">
-    <mat-spinner diameter="48"></mat-spinner>
+    <app-loader [size]="48" />
     <p class="message">Verificando acceso&hellip;</p>
   </ng-container>
 
   <!-- Estado: error -->
   <ng-container *ngIf="errorMsg">
-    <span class="error-icon material-icons" aria-hidden="true">error_outline</span>
+    <app-icon class="error-icon" name="error_outline" size="48" />
     <p class="error-msg" role="alert">{{ errorMsg }}</p>
     <button class="btn-link" type="button" (click)="goToLogin()">
       Volver al inicio de sesión

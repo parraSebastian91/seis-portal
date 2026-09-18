@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { LOGIN_APP_URL } from 'shared-utils';
+import { LOGIN_APP_URL, LoaderComponent } from 'shared-utils';
 
 /**
  * Componente interno del Shell que hace una hard-navigation hacia app-login.
@@ -12,7 +12,7 @@ import { LOGIN_APP_URL } from 'shared-utils';
   standalone: false,
   template: `
     <div class="redir-wrap">
-      <mat-spinner diameter="40" aria-label="Redirigiendo al inicio de sesión..."></mat-spinner>
+      <app-loader [size]="40" label="Redirigiendo al inicio de sesión..." />
     </div>
   `,
   styles: [`

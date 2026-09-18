@@ -13,13 +13,12 @@ import { PagesModule } from '../pages/pages.module';
 import { ContenedoRoutingModule } from './contenedor-routing.module';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatBadgeModule } from '@angular/material/badge';
 import { MenuComponent } from './componentes/menu/menu.component';
 import { NavbarComponent } from './componentes/navbar/navbar.component';
 import { TopNavbarComponent } from './componentes/top-navbar/top-navbar.component';
 import { ModalUploadObjectComponent } from './componentes/modal-upload-object/modal-upload-object.component';
 import { RouterModule } from '@angular/router';
-import { SearchableCardSelectComponent, IconComponent } from 'shared-utils';
+import { SearchableCardSelectComponent, IconComponent, NotificationBadgeComponent } from 'shared-utils';
 import { OrganizationSelectorComponent } from './componentes/top-navbar/organization-selector/organization-selector.component';
 import { NotificationsSidebarComponent } from './componentes/notifications-sidebar/notifications-sidebar.component';
 import { AppDrawerComponent } from './componentes/app-drawer/app-drawer.component';
@@ -41,11 +40,11 @@ import { AppDrawerComponent } from './componentes/app-drawer/app-drawer.componen
     MatListModule,
     MatToolbarModule,
     MatSidenavModule,
-    MatBadgeModule,
     ContenedoRoutingModule,
     PagesModule,
     SearchableCardSelectComponent,
     IconComponent,
+    NotificationBadgeComponent,
     OrganizationSelectorComponent,
     NotificationsSidebarComponent,
     AppDrawerComponent,

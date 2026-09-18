@@ -12,8 +12,7 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
-import { DrawerService } from 'shared-utils';
+import { DrawerService, IconComponent } from 'shared-utils';
 
 /**
  * Shell genérico del Drawer.
@@ -28,7 +27,7 @@ import { DrawerService } from 'shared-utils';
   selector: 'app-drawer',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatIconModule],
+  imports: [IconComponent],
   template: `
     @if (visible()) {
       <!-- Overlay -->
@@ -61,7 +60,7 @@ import { DrawerService } from 'shared-utils';
             type="button"
             (click)="requestClose()"
             aria-label="Cerrar panel">
-            <mat-icon aria-hidden="true">close</mat-icon>
+            <app-icon name="close" />
           </button>
         </header>
 
@@ -176,8 +175,6 @@ import { DrawerService } from 'shared-utils';
       flex-shrink: 0;
 
       &:hover { background: rgba(255,255,255,.08); }
-
-      mat-icon { font-size: 20px; width: 20px; height: 20px; }
     }
 
     /* ── Body ── */

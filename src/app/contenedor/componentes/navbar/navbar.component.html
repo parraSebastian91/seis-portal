@@ -1,6 +1,6 @@
 <button id="open-sidebar-button" (click)="openSidebar()" #openSidebarButton aria-label="open sidebar" aria-expanded="false"
     aria-controls="navbar">
-    <mat-icon class="svg" aria-hidden="false" aria-label="icon" >menu</mat-icon>
+    <app-icon class="svg" name="menu" aria-label="icon" />
 </button>
 
 <nav id="navbar" #navbar>
@@ -33,7 +33,7 @@
     <div class="panel-header">
         <span class="panel-title">Notificaciones</span>
         <button class="close-panel-btn" (click)="closeNotificationsPanel()" aria-label="cerrar panel">
-            <mat-icon>close</mat-icon>
+            <app-icon name="close" size="24" />
         </button>
     </div>
 
@@ -50,7 +50,7 @@
                     [class.active]="selectedFilter === section.id"
                     (click)="selectFilter(section.id)"
                     [attr.aria-label]="'filtrar por ' + section.name">
-                <mat-icon class="chip-icon">{{section.icon}}</mat-icon>
+                <app-icon class="chip-icon" [name]="section.icon" size="18" />
                 <span>{{section.name}}</span>
             </button>
         }
@@ -60,14 +60,14 @@
         @for (section of filteredSections; track section.id) {
             <div class="panel-section">
                 <div class="section-header">
-                    <mat-icon>{{section.icon}}</mat-icon>
+                    <app-icon [name]="section.icon" />
                     <span class="section-title">{{section.name}}</span>
                     <span class="badge" *ngIf="section.notifications.length > 0">
                         {{section.notifications.length}}
                     </span>
                     <button class="section-clear-btn" *ngIf="section.notifications.length > 0"
                         (click)="clearSection(section.id)" aria-label="limpiar sección">
-                        <mat-icon>clear_all</mat-icon>
+                        <app-icon name="clear_all" />
                     </button>
                 </div>
 
@@ -89,7 +89,7 @@
         @if (totalNotifications > 0) {
             <div class="panel-actions">
                 <button class="clear-all-btn" (click)="clearAllNotifications()">
-                    <mat-icon>delete_sweep</mat-icon>
+                    <app-icon name="delete_sweep" />
                     <span>Limpiar todas</span>
                 </button>
             </div>

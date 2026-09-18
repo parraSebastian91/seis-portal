@@ -9,13 +9,13 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { provideHttpClient, withInterceptors, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { PagesModule } from './pages/pages.module';
 import { ContenedorModule } from './contenedor/contenedor.module';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {
   credentialsInterceptor,
   authRefreshInterceptor,
   errorInterceptor,
   CorrelationIdInterceptor,
   LOGIN_APP_URL,
+  LoaderComponent,
 } from 'shared-utils';
 import { environment } from '../environments/environment';
 
@@ -29,7 +29,7 @@ import { environment } from '../environments/environment';
     AppRoutingModule,
     PagesModule,
     ContenedorModule,
-    MatProgressSpinnerModule,
+    LoaderComponent,
   ],
   providers: [
     provideAnimationsAsync(),

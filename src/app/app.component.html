@@ -1,6 +1,6 @@
 <!-- Spinner global de restauración de sesión (F5 / recarga) -->
 <div *ngIf="sessionRestore.restoring()" class="global-restore-spinner" aria-live="polite" aria-label="Restaurando sesión...">
-  <mat-spinner diameter="52"></mat-spinner>
+  <app-loader [size]="52" />
 </div>
 
 <router-outlet *ngIf="!sessionRestore.restoring()" />

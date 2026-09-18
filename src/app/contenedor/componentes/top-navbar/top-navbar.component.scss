@@ -62,6 +62,7 @@ $hover-bg     : rgba(255,255,255,0.06);
 
 // ─── Icon buttons ─────────────────────────────────────────────────────────────
 .btn-mini-fab {
+  position: relative;
   width: 40px;
   height: 40px;
   background: $hover-bg;
@@ -74,14 +75,6 @@ $hover-bg     : rgba(255,255,255,0.06);
   justify-content: center;
   transition: background 0.18s, border-color 0.18s, color 0.18s;
 
-  mat-icon {
-    font-size: 22px;
-    line-height: 22px;
-    width: 22px;
-    height: 22px;
-    color: inherit;
-  }
-
   &:hover {
     background: rgba(0, 191, 165, 0.12);
     border-color: rgba(0, 191, 165, 0.40);
@@ -92,31 +85,6 @@ $hover-bg     : rgba(255,255,255,0.06);
     outline: 2px solid $brand;
     outline-offset: 2px;
   }
-}
-
-// ─── Material badge overrides ─────────────────────────────────────────────────
-:host ::ng-deep .btn-mini-fab mat-icon .mat-badge-content {
-  min-width: 20px !important;
-  height: 20px !important;
-  line-height: 20px !important;
-  padding: 0 5px !important;
-  border-radius: 10px !important;
-  font-size: 11px !important;
-  font-weight: 700 !important;
-  font-family: Roboto, "Helvetica Neue", sans-serif !important;
-  color: #fff !important;
-  letter-spacing: 0 !important;
-  background-color: #e53935 !important;
-}
-
-:host ::ng-deep .btn-mini-fab.badge-pulse .mat-badge-content {
-  animation: notificationBadgePulse 420ms ease-out;
-}
-
-@keyframes notificationBadgePulse {
-  0%   { transform: scale(1);    }
-  45%  { transform: scale(1.24); }
-  100% { transform: scale(1);    }
 }
 
 // ─── Mobile ───────────────────────────────────────────────────────────────────
