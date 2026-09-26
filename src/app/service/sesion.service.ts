@@ -56,7 +56,7 @@ export class SesionService {
 
   logout(): Promise<any> {
 
-    const obs$ = this.http.get<any>(`${this.base + environment.msAuth}/logout`, { withCredentials: true })
+    const obs$ = this.http.post<any>(`${this.base + environment.msAuth}/logout`, {}, { withCredentials: true })
       .pipe(
         catchError(error => {
           console.error('Error during logout:', error);
