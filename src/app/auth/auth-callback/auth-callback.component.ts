@@ -80,7 +80,7 @@ export class AuthCallbackComponent implements OnInit, OnDestroy {
     // ms-auth establece las cookies auth.session + auth.refresh
     try {
       await firstValueFrom(
-        this.http.post<CallbackApiResponse>(`${base}/api/auth/security/callback`, {
+        this.http.post<CallbackApiResponse>(`${base}/api/auth/security/token`, {
           code,
           cid,
           codeVerifier,
