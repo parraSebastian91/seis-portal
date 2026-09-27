@@ -40,7 +40,7 @@ export class ValidateComponent implements OnInit, OnDestroy {
     this.token = this.route.snapshot.queryParamMap.get('code') ?? undefined;
     if (!await this.validateSession()) {
       console.log('Navegando a login externo');
-      window.location.href = environment.appLogin + `?status=true&message=Error%20validando%20la%20sesión.%20Por%20favor,%20inicie%20sesión%20nuevamente.`;
+      window.location.href = environment.loginUrl + `?status=true&message=Error%20validando%20la%20sesión.%20Por%20favor,%20inicie%20sesión%20nuevamente.`;
     } else {
       console.log('Navegando a /erp/inicio');
       setTimeout(() => {

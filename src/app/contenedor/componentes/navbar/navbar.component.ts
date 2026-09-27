@@ -156,7 +156,7 @@ export class NavbarComponent implements OnInit, AfterViewInit, OnDestroy {
   async logout(): Promise<void> {
     try {
       await this.sesionService.logout();
-      window.location.href = environment.appLogin;
+      window.location.href = environment.loginUrl;
     } catch (error) {
       console.error('Error during logout:', error);
     }
