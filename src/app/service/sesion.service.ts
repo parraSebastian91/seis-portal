@@ -5,7 +5,7 @@ import { environment } from '../../environments/environment';
 import { CallbackInterface } from '../interface/request/callback.interface';
 import { ConfigService } from './config.service';
 import { Sistema, SystemNavigationDTO } from './interfaces/SystemNavigator.dto';
-import { ApiResponse } from '../../../../shared-utils/src/lib/services/types/api-response.model';
+import { ApiResponse } from 'shared-utils';
 
 @Injectable({
   providedIn: 'root'
