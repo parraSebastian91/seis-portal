@@ -18,7 +18,15 @@ import { NavbarComponent } from './componentes/navbar/navbar.component';
 import { TopNavbarComponent } from './componentes/top-navbar/top-navbar.component';
 import { ModalUploadObjectComponent } from './componentes/modal-upload-object/modal-upload-object.component';
 import { RouterModule } from '@angular/router';
-import { SearchableCardSelectComponent, IconComponent, NotificationBadgeComponent } from 'shared-utils';
+import {
+  SearchableCardSelectComponent,
+  IconComponent,
+  NotificationBadgeComponent,
+  ModalComponent,
+  ModalTitleDirective,
+  ModalActionsDirective,
+  ButtonComponent,
+} from 'shared-utils';
 import { OrganizationSelectorComponent } from './componentes/top-navbar/organization-selector/organization-selector.component';
 import { NotificationsSidebarComponent } from './componentes/notifications-sidebar/notifications-sidebar.component';
 import { AppDrawerComponent } from './componentes/app-drawer/app-drawer.component';
@@ -45,6 +53,11 @@ import { AppDrawerComponent } from './componentes/app-drawer/app-drawer.componen
     SearchableCardSelectComponent,
     IconComponent,
     NotificationBadgeComponent,
+    // Shell de ModalUploadObjectComponent: ya no reimplementa el modal.
+    ModalComponent,
+    ModalTitleDirective,
+    ModalActionsDirective,
+    ButtonComponent,
     OrganizationSelectorComponent,
     NotificationsSidebarComponent,
     AppDrawerComponent,
