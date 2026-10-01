@@ -26,10 +26,10 @@ import {
   ModalTitleDirective,
   ModalActionsDirective,
   ButtonComponent,
+  DrawerComponent,
 } from 'shared-utils';
 import { OrganizationSelectorComponent } from './componentes/top-navbar/organization-selector/organization-selector.component';
 import { NotificationsSidebarComponent } from './componentes/notifications-sidebar/notifications-sidebar.component';
-import { AppDrawerComponent } from './componentes/app-drawer/app-drawer.component';
 
 @NgModule({
   declarations: [
@@ -60,7 +60,7 @@ import { AppDrawerComponent } from './componentes/app-drawer/app-drawer.componen
     ButtonComponent,
     OrganizationSelectorComponent,
     NotificationsSidebarComponent,
-    AppDrawerComponent,
+    DrawerComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
