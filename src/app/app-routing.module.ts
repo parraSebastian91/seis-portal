@@ -46,8 +46,18 @@ const routes: Routes = [
     loadChildren: () => import('./pages/pages-routing.module').then(m => m.PagesRoutingModule),
   },
 
-  // ── Ruta raíz → redirect a login ──────────────────────────────────────────
-  // { path: '', redirectTo: 'auth/redirect-to-login', pathMatch: 'full' },
+  // ── Ruta raíz y cualquier otra → redirect a login ─────────────────────────
+  //
+  // Sin estas dos, abrir el portal en su raíz —o en cualquier URL que no
+  // coincida— deja una pantalla EN BLANCO: el router no encuentra ruta, tira
+  // `NG04002` por consola y no renderiza nada. No hay forma de llegar al login
+  // desde ahí, que es justamente por donde entra alguien que recién abre la app.
+  //
+  // La raíz estaba comentada desde el commit e98c9e4 (2026-06-03) y el comodín
+  // nunca existió. `/publicador` y los demás alias sí redirigían, así que el
+  // problema solo aparecía entrando por la puerta principal.
+  { path: '', redirectTo: 'auth/redirect-to-login', pathMatch: 'full' },
+  { path: '**', redirectTo: 'auth/redirect-to-login' },
 ];
 
 @NgModule({
